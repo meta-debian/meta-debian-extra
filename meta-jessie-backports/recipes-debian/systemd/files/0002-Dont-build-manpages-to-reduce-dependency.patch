@@ -1,0 +1,30 @@
+From af6cef4a78019ea956384772ca67e858c75ead71 Mon Sep 17 00:00:00 2001
+From: Nguyen Van Hieu <hieu.nguyenvan@toshiba-tsdv.com>
+Date: Fri, 17 Feb 2017 09:57:27 +0700
+Subject: [PATCH] Don't build manpages to reduce dependency,this depends on
+ docbook-xml and docbook-xsl
+
+Signed-off-by: Nguyen Van Hieu <hieu.nguyenvan@toshiba-tsdv.com>
+---
+ Makefile.am | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index 236df2c..2b8e7c2 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -706,11 +706,6 @@ docs/html/man:
+ man/index.html: man/systemd.index.html
+ 	$(AM_V_LN)$(LN_S) -f systemd.index.html $@
+ 
+-if HAVE_PYTHON
+-noinst_DATA += \
+-	man/index.html
+-endif
+-
+ CLEANFILES += \
+ 	man/index.html
+ 
+-- 
+2.1.4
+
