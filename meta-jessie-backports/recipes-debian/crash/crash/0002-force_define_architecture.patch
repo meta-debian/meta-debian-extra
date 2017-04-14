@@ -1,0 +1,27 @@
+From 4915741e2b4064d5a9a6856f69adbe314eeff150 Mon Sep 17 00:00:00 2001
+From: Masahiro Yamada <masahiro17.yamada@toshiba.co.jp>
+Date: Thu, 29 Sep 2016 00:15:25 +0000
+Subject: [PATCH 2/2] force define architecture
+
+Signed-off-by: Masahiro Yamada <masahiro17.yamada@toshiba.co.jp>
+---
+ configure.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/configure.c b/configure.c
+index 120d409..fa2c731 100644
+--- a/configure.c
++++ b/configure.c
+@@ -523,6 +523,9 @@ get_current_configuration(struct supported_gdb_version *sp)
+ 			arch_mismatch(sp);
+ 	}
+ 
++    /* Force define archtecture */
++    target_data.target = FORCE_DEFINE_ARCH;
++
+         if ((fp = fopen("Makefile", "r")) == NULL) {
+ 		perror("Makefile");
+ 		goto get_release;
+-- 
+2.1.4
+
