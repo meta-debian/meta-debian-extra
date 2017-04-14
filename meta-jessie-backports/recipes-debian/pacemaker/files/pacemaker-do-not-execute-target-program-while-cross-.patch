@@ -1,0 +1,43 @@
+From 9ad877d3f4294e5aa8b479cc81fa10250134ccc3 Mon Sep 17 00:00:00 2001
+From: Bian Naimeng <biannm@cn.fujitsu.com>
+Date: Mon, 6 Jul 2015 12:20:17 +0900
+Subject: [PATCH] pacemaker: do not execute target program while cross compile
+
+Signed-off-by: Bian Naimeng <biannm@cn.fujitsu.com>
+---
+ Makefile.common | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/Makefile.common b/Makefile.common
+index 5163261..630cab6 100644
+--- a/Makefile.common
++++ b/Makefile.common
+@@ -36,6 +36,8 @@ if BUILD_HELP
+ man8_MANS		= $(sbin_PROGRAMS:%=%.8) $(sbin_SCRIPTS:%=%.8)
+ endif
+
++man7_MANS		=
++
+ %.8:	% $(MAN8DEPS)
+ 	chmod a+x $(abs_builddir)/$<
+ 	$(PCMK_V) PATH=$$PATH:$(abs_builddir) $(abs_builddir)/$< --help
+@@ -43,13 +45,13 @@ endif
+ 	$(AM_V_MAN)PATH=$$PATH:$(abs_builddir) $(HELP2MAN) --output $@ --no-info --section 8 --name "Part of the Pacemaker cluster resource manager" $(abs_builddir)/$<
+
+ %.xml:  %
+-	$(AM_V_GEN)$(abs_builddir)/$< metadata > $@
++	@echo "xml for $<: Do not try to execute target program here"
+
+ %.dbook: %.xml
+-	$(AM_V_XSL)$(XSLTPROC) --nonet --novalid --stringparam man.name $* $(DBOOK_OPTS) $(top_srcdir)/xml/ocf-meta2man.xsl $(abs_builddir)/$< > $(abs_builddir)/$@
++	@echo "dbook for $<: Do not try to execute target program here"
+
+ %.7:	%.dbook
+-	$(AM_V_XSL)$(XSLTPROC) $(MANPAGE_XSLT) $(abs_builddir)/$< $(PCMK_quiet)
++	@echo "man7 for $<: Do not try to execute target program here"
+
+ # Build docbook from asciidoc because XML is a PITA to edit
+ #
+--
+1.8.4.2
+
