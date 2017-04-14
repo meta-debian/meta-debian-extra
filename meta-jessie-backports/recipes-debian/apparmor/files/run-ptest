@@ -1,0 +1,92 @@
+#!/bin/sh
+
+TESTS=" \
+    tst_aalogmisc \
+    tst_features \
+    tst_kernel \
+    tst_lib \
+    tst_misc \
+    tst_regex \
+    tst_symtab \
+    tst_variable \
+"
+
+for f in ${TESTS}
+do
+    ./${f}
+    if [ $? -eq 0 ]; then
+        echo "PASS: ${f}"
+    else
+        echo "FAIL: ${f}"
+    fi
+done
+
+PARSER=/sbin/apparmor_parser
+
+# parser/tst/error_output
+LANG=C ${PARSER} -S -I errors >/dev/null errors/okay.sd
+if [ $? -eq 0 ]; then
+    echo "PASS: errors/okay"
+else
+    echo "FAIL: errors/okay"
+fi
+LANG=C ${PARSER} -S -I errors 2>&1 >/dev/null errors/single.sd | \
+    grep -q "AppArmor parser error for errors/single.sd in errors/single.sd at line 3: Could not open 'failure'"
+if [ $? -eq 0 ]; then
+    echo "PASS: errors/single"
+else
+    echo "FAIL: errors/single"
+fi
+LANG=C ${PARSER} -S -I errors 2>&1 >/dev/null errors/double.sd | \
+    grep -q "AppArmor parser error for errors/double.sd in errors/includes/busted at line 66: Could not open 'does-not-exist'"
+if [ $? -eq 0 ]; then
+    echo "PASS: errors/double"
+else
+    echo "FAIL: errors/double"
+fi
+LANG=C ${PARSER} -S -I errors 2>&1 >/dev/null errors/modefail.sd | \
+    grep -q "AppArmor parser error for errors/modefail.sd in errors/modefail.sd at line 6: syntax error"
+if [ $? -eq 0 ]; then
+    echo "PASS: errors/modefail"
+else
+    echo "FAIL: errors/modefail"
+fi
+LANG=C ${PARSER} -S -I errors 2>&1 >/dev/null errors/multi_include.sd | \
+    grep -q "AppArmor parser error for errors/multi_include.sd in errors/multi_include.sd at line 12: Could not open 'failure'"
+if [ $? -eq 0 ]; then
+    echo "PASS: errors/multi_include"
+else
+    echo "FAIL: errors/multi_include"
+fi
+
+# parser/tst/caching
+LANG=C ./caching.py -p "${PARSER}" -v
+if [ $? -eq 0 ]; then
+    echo "PASS: caching"
+else
+    echo "FAIL: caching"
+fi
+
+# parser/tst/minimize
+LANG=C APPARMOR_PARSER="${PARSER}" ./minimize.sh
+if [ $? -eq 0 ]; then
+    echo "PASS: minimize"
+else
+    echo "FAIL: minimize"
+fi
+
+# parser/tst/equality
+LANG=C APPARMOR_PARSER="${PARSER}" ./equality.sh
+if [ $? -eq 0 ]; then
+    echo "PASS: equality"
+else
+    echo "FAIL: equality"
+fi
+
+# parser/tst/parser_sanity
+LANG=C APPARMOR_PARSER="${PARSER}" /usr/bin/prove -f simple.pl
+if [ $? -eq 0 ]; then
+    echo "PASS: parser_sanity"
+else
+    echo "FAIL: parser_sanity"
+fi
