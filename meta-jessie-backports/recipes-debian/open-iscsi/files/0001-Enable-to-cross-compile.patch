@@ -1,0 +1,35 @@
+From d091976d9e1777daa108fc8624f3fd05e3f6eca1 Mon Sep 17 00:00:00 2001
+From: Masahiro Yamada <masahiro17.yamada@toshiba.co.jp>
+Date: Wed, 26 Oct 2016 04:10:03 +0000
+Subject: [PATCH] Enable to cross compile.
+
+Signed-off-by: Masahiro Yamada <masahiro17.yamada@toshiba.co.jp>
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 065456b..7bfecce 100644
+--- a/Makefile
++++ b/Makefile
+@@ -4,7 +4,7 @@
+ 
+ # if you are packaging open-iscsi, set this variable to the location
+ # that you want everything installed into.
+-DESTDIR ?= 
++DESTDIR ?=
+ 
+ prefix = /usr
+ exec_prefix = /
+@@ -54,7 +54,7 @@ user: iscsiuio/Makefile
+ 	@echo "Read README file for detailed information."
+ 
+ iscsiuio/Makefile: iscsiuio/configure iscsiuio/Makefile.in
+-	cd iscsiuio; ./configure
++	cd iscsiuio; ./configure --host=${HOST_SYS}
+ 
+ iscsiuio/configure iscsiuio/Makefile.in: iscsiuio/configure.ac iscsiuio/Makefile.am
+ 	cd iscsiuio; autoreconf --install
+-- 
+2.1.4
+
