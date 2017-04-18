@@ -1,0 +1,42 @@
+From 335ac78f2aa1352df99427a6cfa9637ee547aa6a Mon Sep 17 00:00:00 2001
+From: Masahiro Yamada <masahiro17.yamada@toshiba.co.jp>
+Date: Thu, 29 Sep 2016 01:15:09 +0000
+Subject: [PATCH 1/2] cross add configure option
+
+This patch was copied from below patch.
+
+ From cbaaa42933bb27b1bcff4c7d71d54c913201ee88 Mon Sep 17 00:00:00 2001
+ From: Lei Maohui <leimaohui@cn.fujitsu.com>
+ Date: Fri,  9 Jan 2015 11:51:18 +0900
+ Subject: [PATCH] cross_add_configure_option
+
+Signed-off-by: Masahiro Yamada <masahiro17.yamada@toshiba.co.jp>
+---
+ Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index a06cf73..c06a646 100644
+--- a/Makefile
++++ b/Makefile
+@@ -232,7 +232,7 @@ gdb_merge: force
+ 	@echo "../../${PROGRAM} ../../${PROGRAM}lib.a" > ${GDB}/gdb/mergeobj
+ 	@rm -f ${PROGRAM}
+ 	@if [ ! -f ${GDB}/config.status ]; then \
+-	  (cd ${GDB}; ./configure ${GDB_CONF_FLAGS} --with-separate-debug-dir=/usr/lib/debug \
++	    (cd ${GDB}; ./configure --host=${GDB_TARGET} --build=${GDB_HOST} --with-separate-debug-dir=/usr/lib/debug \
+ 	    --with-bugurl="" --with-expat=no --with-python=no --disable-sim; \
+ 	  make --no-print-directory CRASH_TARGET=${TARGET}; echo ${TARGET} > crash.target) \
+ 	else make --no-print-directory rebuild; fi
+@@ -282,7 +282,7 @@ force:
+ 
+ make_configure: force
+ 	@rm -f configure
+-	@${CC} ${CONF_FLAGS} -o configure configure.c ${WARNING_ERROR} ${WARNING_OPTIONS}
++	@cc ${CONF_FLAGS} -o configure configure.c ${WARNING_ERROR} ${WARNING_OPTIONS}
+ 
+ clean: make_configure
+ 	@./configure ${CONF_TARGET_FLAG} -q -b
+-- 
+2.1.4
+
