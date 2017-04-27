@@ -28,12 +28,12 @@ FILES_${PN} += "/lib/udev"
 
 do_install_append() {
 	# debian/gfs2-utils.links
-	pushd ${D}${sbindir}
+	cd ${D}${sbindir}
 	for f in fsck mkfs
 	do
 		ln -s ${f}.gfs2 gfs2_${f}
 	done
-	popd
+	cd -
 }
 
 RDEPENDS_${PN} += "libblkid1 libncurses5 libtinfo5 python zlib"
