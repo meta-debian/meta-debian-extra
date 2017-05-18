@@ -33,7 +33,7 @@ DEPENDS = "intltool-native \
            libgcrypt \
            kmod \
            util-linux \
-           ${@base_contains('DISTRO_FEATURES', 'pam', 'libpam', '', d)} \
+           ${@bb.utils.contains('DISTRO_FEATURES', 'pam', 'libpam', '', d)} \
            python3-lxml-native \
           "
 
@@ -63,7 +63,7 @@ DEBIAN_CONFOPTS = "\
 #   avoid compile error "Cannot open src/*/org.freedesktop.*.policy"
 # --disable-selinux: Disable selinux support
 EXTRA_OECONF = "${DEBIAN_CONFOPTS} \
-                ${@base_contains('DISTRO_FEATURES', 'pam', '--enable-pam', '--disable-pam', d)} \
+                ${@bb.utils.contains('DISTRO_FEATURES', 'pam', '--enable-pam', '--disable-pam', d)} \
                 --disable-manpages \
                 --disable-selinux \
                 --enable-dependency-tracking \
@@ -239,7 +239,7 @@ PACKAGES =+ "libnss-myhostname \
              libnss-resolve \
              libsystemd-dev \
              libsystemd \
-             ${@base_contains('DISTRO_FEATURES', 'pam', 'libpam-systemd', '', d)} \
+             ${@bb.utils.contains('DISTRO_FEATURES', 'pam', 'libpam-systemd', '', d)} \
              udev \
              libudev-dev \
              libudev \
@@ -303,7 +303,7 @@ FILES_${PN} = "${base_bindir} \
                ${datadir} \
                ${sysconfdir}/dbus-1 \
                ${sysconfdir}/modules-load.d/modules.conf \
-               ${@base_contains('DISTRO_FEATURES', 'pam', '${sysconfdir}/pam.d/systemd-user', '', d)} \
+               ${@bb.utils.contains('DISTRO_FEATURES', 'pam', '${sysconfdir}/pam.d/systemd-user', '', d)} \
                ${sysconfdir}/sysctl.d/99-sysctl.conf \
                ${sysconfdir}/systemd \
                ${sysconfdir}/xdg \
@@ -313,7 +313,7 @@ FILES_${PN}-dbg += "${base_libdir}/systemd/.debug \
                     ${base_libdir}/systemd/system-generators/.debug \
                     ${base_libdir}/udev/.debug \
                     ${libdir}/udev/.debug \
-                    ${@base_contains('DISTRO_FEATURES', 'pam', '${base_libdir}/security/.debug/pam_systemd.so', '', d)} \
+                    ${@bb.utils.contains('DISTRO_FEATURES', 'pam', '${base_libdir}/security/.debug/pam_systemd.so', '', d)} \
                     ${PYTHON_SITEPACKAGES_DIR}/systemd/.debug \
                    "
 FILES_${PN}-dev = ""

@@ -24,7 +24,7 @@ PV = "2.10.95"
 # 0001-Fix-autogen.patch: Fix autogen.sh to use libtools under sysroots
 SRC_URI += "file://0001-Fix-autogen.patch"
 
-DEPENDS += " flex-native python bison-native swig-native apache2 ${@base_contains('DISTRO_FEATURES', 'pam', 'libpam', '', d)}"
+DEPENDS += " flex-native python bison-native swig-native apache2 ${@bb.utils.contains('DISTRO_FEATURES', 'pam', 'libpam', '', d)}"
 # These are needed for --with-python
 export STAGING_INCDIR
 export STAGING_LIBDIR
@@ -86,7 +86,7 @@ do_install() {
 	${MAKE} "DESTDIR = ${D}" -C ${S}/binutils install
 	${MAKE} "DESTDIR = ${D}" -C ${S}/utils install
 	${MAKE} "DESTDIR = ${D}" -C ${S}/changehat/mod_apparmor install
-	if [ ${@base_contains('DISTRO_FEATURES', 'pam', 'pam', '', d)} = "pam" ];then
+	if [ ${@bb.utils.contains('DISTRO_FEATURES', 'pam', 'pam', '', d)} = "pam" ];then
 		${MAKE} "DESTDIR = ${D}" -C ${S}/changehat/pam_apparmor install
 	fi
 

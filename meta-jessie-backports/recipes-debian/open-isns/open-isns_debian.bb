@@ -62,7 +62,7 @@ RDEPENDS_${PN}-server += "libisns0 ${PN}-utils"
 FILES_${PN}-utils = "${sysconfdir}/isns/isnsadm.conf ${sbindir}/isnsadm"
 RDEPENDS_${PN}-utils += "libisns0"
 
-inherit ${@base_contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','',d)}
+inherit ${@bb.utils.contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','',d)}
 SYSTEMD_PACKAGES = "${PN}-discoveryd ${PN}-server"
 SYSTEMD_SERVICE_${PN}-discoveryd = "isnsdd.service"
 SYSTEMD_AUTO_ENABLE = "enable"

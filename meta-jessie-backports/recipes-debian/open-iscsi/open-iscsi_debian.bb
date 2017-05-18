@@ -77,7 +77,7 @@ FILES_${PN} += "${base_libdir}/open-iscsi/startup-checks.sh"
 FILES_${PN} += "${base_libdir}/open-iscsi/umountiscsi.sh"
 FILES_${PN} += "${base_libdir}/modules-load.d/open-iscsi.conf"
 
-inherit ${@base_contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','',d)}
+inherit ${@bb.utils.contains('VIRTUAL-RUNTIME_init_manager','systemd','systemd','',d)}
 
 SYSTEMD_PACKAGES = "${PN} iscsiuio"
 SYSTEMD_SERVICE_${PN} = "open-iscsi.service iscsid.service"

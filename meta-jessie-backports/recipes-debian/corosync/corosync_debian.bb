@@ -39,7 +39,7 @@ EXTRA_OECONF = " \
 	--enable-qdevices \
 	--disable-static \
 "
-PACKAGECONFIG ??= "${@base_contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)}"
+PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)}"
 PACKAGECONFIG[rdma]  = "--enable-rdma,--disable-rdma,librdmacm,"
 PACKAGECONFIG[monitoring]  = "--enable-monitoring,--disable-monitoring,libstatgrab,"
 PACKAGECONFIG[systemd]  = "--enable-systemd,--disable-systemd,systemd,"
