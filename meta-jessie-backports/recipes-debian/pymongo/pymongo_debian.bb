@@ -18,6 +18,14 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=2a944942e1496af1886903d274dedb13 \
 DEBIAN_QUILT_PATCHES = ""
 
 inherit setuptools python3native
+
+# need to export these variables for python runtime
+# fix error:
+#       PREFIX = os.path.normpath(sys.prefix).replace( os.getenv("BUILD_SYS"), os.getenv("HOST_SYS") )
+#       TypeError: Can't convert 'NoneType' object to str implicitly
+export BUILD_SYS
+export HOST_SYS
+
 do_install_append() {
 	# remove unwanted files
 	rm -rf `find ${D}${libdir} -type d -name "__pycache__"` \
