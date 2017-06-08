@@ -1,0 +1,29 @@
+From f6d192bcbcf5cd7d8d1fbc4289bc20f28721c962 Mon Sep 17 00:00:00 2001
+From: Toshiko YOSHIDA <toshiko.yoshida@toshiba.co.jp>
+Date: Thu, 8 Jun 2017 07:05:22 +0000
+Subject: [PATCH] skip creating fence_kdump.8
+
+It is required to run fence_kdump to create fence_kdump.8
+but it is difficult in cross compilation process
+
+Signed-off-by: Toshiko YOSHIDA <toshiko.yoshida@toshiba.co.jp>
+---
+ fence/agents/Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fence/agents/Makefile.am b/fence/agents/Makefile.am
+index 9f0964c..dbf1c01 100644
+--- a/fence/agents/Makefile.am
++++ b/fence/agents/Makefile.am
+@@ -25,7 +25,7 @@ kdump_fence_kdump_CFLAGS	= -D_GNU_SOURCE -Ikdump
+ kdump_fence_kdump_send_SOURCES	= kdump/fence_kdump_send.c
+ kdump_fence_kdump_send_CFLAGS	= -D_GNU_SOURCE -Ikdump
+ 
+-dist_man_MANS			= kdump/fence_kdump.8 kdump/fence_kdump_send.8 zvm/fence_zvm.8
++dist_man_MANS			= kdump/fence_kdump_send.8 zvm/fence_zvm.8
+ 
+ scsidatadir			= $(CLUSTERDATA)
+ scsidata_SCRIPTS		= scsi/fence_scsi_check scsi/fence_scsi_check_hardreboot
+-- 
+2.1.4
+

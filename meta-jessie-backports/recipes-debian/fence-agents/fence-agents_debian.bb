@@ -9,11 +9,11 @@ HOMEPAGE = "https://fedorahosted.org/cluster/wiki/HomePage"
 # Override value of DEBIAN_GIT_BRANCH variable in debian-package class
 DEBIAN_GIT_BRANCH = "jessie-backports-master"
 
-PR = "r0"
+PR = "r1"
 
 inherit debian-package
 inherit autotools pythonnative
-PV = "4.0.22"
+PV = "4.0.25"
 
 DEPENDS += "autoconf automake python-suds-native python-pexpect-native \
             python-pycurl-native python-requests-native"
@@ -37,6 +37,9 @@ LICENSE = "GPL-2+ & LGPL-2.1+"
 LIC_FILES_CHKSUM = "\
 	file://doc/COPYING.applications;md5=751419260aa954499f7abaabaa882bbe \
 	file://doc/COPYING.libraries;md5=2d5025d4aa3495befef8f17206a5b0a1"
+
+# skip creating fence_kdump.8 to enable cross build
+SRC_URI += "file://0001-skip-creating-fence_kdump.8.patch"
 
 # Enable to specify python binary
 do_configure_prepend() {
