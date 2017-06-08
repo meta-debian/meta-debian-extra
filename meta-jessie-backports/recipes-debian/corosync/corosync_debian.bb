@@ -19,8 +19,8 @@ DEBIAN_GIT_BRANCH = "jessie-backports-master"
 
 inherit debian-package
 
-PR = "r0"
-PV = "2.3.6"
+PR = "r1"
+PV = "2.4.2"
 LICENSE = "BSD-3-Clause"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=a85eb4ce24033adb6088dd1d6ffc5e5d"
 
@@ -37,6 +37,7 @@ EXTRA_OECONF = " \
 	--enable-xmlconf \
 	--enable-upstart \
 	--enable-qdevices \
+	--enable-qnetd \
 	--disable-static \
 "
 PACKAGECONFIG ??= "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '', d)}"
@@ -66,6 +67,24 @@ do_install_append() {
 	install -m 0644 ${S}/debian/corosync.conf \
 	                ${D}${sysconfdir}/corosync/corosync.conf
 
+	# Base on debian/corosync-qdevice.init
+	install -D -m 0755 ${S}/debian/corosync-qdevice.init \
+	                   ${D}${sysconfdir}/init.d/${PN}-qdevice
+	rm -f ${D}${datadir}/${PN}/corosync-qdevice
+
+	# Base on debian/corosync-qdevice.install
+	install -D -m 0644 ${S}/init/corosync-qdevice.sysconfig.example \
+	                   ${D}${sysconfdir}/default/${PN}-qdevice
+
+	# Base on debian/corosync-qnetd.init
+	install -D -m 0755 ${S}/debian/corosync-qnetd.init \
+	                   ${D}${sysconfdir}/init.d/${PN}-qnetd
+	rm -f ${D}${datadir}/${PN}/corosync-qnetd
+
+	# Base on debian/corosync-qnetd.install
+	install -D -m 644 ${S}/init/corosync-qnetd.sysconfig.example \
+	                  ${D}${sysconfdir}/default/corosync-qnetd
+
 	# Base on debian/rules
 	rm -rf ${D}${datadir}/corosync/corosync \
 	       ${D}${datadir}/corosync/corosync-notifyd \
@@ -82,7 +101,8 @@ RDEPENDS_${PN}-notifyd += "lsb-base ${PN}"
 
 PACKAGES =+ "${PN}-notifyd libcfg libcfg-dev libcmap libcmap-dev lib${PN}-common \
              lib${PN}-common-dev libcpg libcpg-dev libquorum libquorum-dev libsam \
-             libsam-dev libtotem-pg libtotem-pg-dev libvotequorum libvotequorum-dev"
+             libsam-dev libtotem-pg libtotem-pg-dev libvotequorum libvotequorum-dev \
+             ${PN}-qdevice ${PN}-qnetd"
 
 FILES_${PN}-notifyd = "\
 	${sysconfdir}/dbus-1/system.d/corosync-signals.conf \
@@ -136,6 +156,20 @@ FILES_libvotequorum-dev = "\
 	${includedir}/corosync/votequorum.h \
 	${libdir}/libvotequorum.so \
 	${libdir}/pkgconfig/libvotequorum.pc"
+FILES_${PN}-qdevice = "\
+	${sysconfdir}/init.d/${PN}-qdevice \
+	${sysconfdir}/${PN}/qdevice \
+	${sysconfdir}/default/${PN}-qdevice \
+	${base_libdir}/systemd/system/${PN}-qdevice.service \
+	${sbindir}/${PN}-qdevice* \
+	/run/${PN}-qdevice"
+FILES_${PN}-qnetd = "\
+	${sysconfdir}/init.d/${PN}-qnetd \
+	${sysconfdir}/${PN}/qnetd \
+	${sysconfdir}/default/${PN}-qnetd \
+	${base_libdir}/systemd/system/${PN}-qnetd.service \
+	${bindir}/${PN}-qnetd* \
+	/run/${PN}-qnetd"
 FILES_${PN} += "\
 	${datadir}/augeas/* \
 	${systemd_system_unitdir}/corosync.service"
