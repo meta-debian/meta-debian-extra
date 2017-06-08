@@ -11,10 +11,12 @@ DEBIAN_GIT_BRANCH = "jessie-backports-master"
 
 inherit debian-package
 
-PR = "r0"
-PV = "1.0"
+PR = "r1"
+PV = "1.0.1"
 LICENSE = "LGPL-2.1+"
 LIC_FILES_CHKSUM = "file://COPYING;md5=321bf41f280cf805086dd5a720b37785"
+
+SRC_URI += "file://0001-Remove-runtime-check-for-CLOCK_MONOTONIC.patch"
 
 inherit autotools pkgconfig
 

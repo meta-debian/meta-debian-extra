@@ -1,0 +1,36 @@
+From 2abdd078f2103f64babc73b3d0f6207efceeccf8 Mon Sep 17 00:00:00 2001
+From: Toshiko YOSHIDA <toshiko.yoshida@toshiba.co.jp>
+Date: Thu, 8 Jun 2017 01:19:51 +0000
+Subject: [PATCH] Remove runtime check for CLOCK_MONOTONIC
+
+correct syntax of
+https://patchwork.openembedded.org/patch/138706/
+
+Signed-off-by: Toshiko YOSHIDA <toshiko.yoshida@toshiba.co.jp>
+---
+ configure.ac | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index fa13ae6..d71da4f 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -175,9 +175,12 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+                  )
+ 
+ AC_MSG_CHECKING(for a working clock_getres(CLOCK_MONOTONIC, &ts))
+-AC_RUN_IFELSE([AC_LANG_PROGRAM(
+-[[#include <time.h>]],
+-[[struct timespec ts; if(clock_getres(CLOCK_MONOTONIC, &ts)) return -1;]])],
++AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
++[[#include <time.h>
++#include <unistd.h>]],
++[[#if !(defined(_POSIX_MONOTONIC_CLOCK) && _POSIX_MONOTONIC_CLOCK >= 0 && defined(CLOCK_MONOTONIC))
++        #error No monotonic clock
++#endif]])],
+                     [
+                       AC_MSG_RESULT([yes])
+                       AC_DEFINE_UNQUOTED([HAVE_CLOCK_GETRES_MONOTONIC], 1, [Define to 1 if clock_getres(CLOCK_MONOTONIC, &ts) works])
+-- 
+2.1.4
+
