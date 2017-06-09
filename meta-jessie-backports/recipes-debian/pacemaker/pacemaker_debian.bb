@@ -13,14 +13,17 @@ HOMEPAGE = "http://www.clusterlabs.org/"
 # Override value of DEBIAN_GIT_BRANCH variable in debian-package class
 DEBIAN_GIT_BRANCH = "jessie-backports-master"
 
-PR = "r0"
-PV = "1.1.15"
+PR = "r1"
+PV = "1.1.16"
 inherit debian-package
 
-LICENSE = "GPL-2.0+ & LGPL-2.1+"
+LICENSE = "GPL-2.0+ & LGPL-2.1+ & CC-BY-SA-4.0+ & BSD-3-Clause"
 LIC_FILES_CHKSUM = "\
-	file://COPYING;md5=6adca3b36477cc77e04376f9a40df32c \
-	file://COPYING.LIB;md5=243b725d71bb5df4a1e5920b344b86ad"
+	file://COPYING;md5=19a64afd3a35d044a80579d7aafc30ff \
+	file://licenses/GPLv2;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
+	file://licenses/LGPLv2.1;md5=243b725d71bb5df4a1e5920b344b86ad \
+	file://licenses/CC-BY-SA-4.0;md5=e277f2eefa979e093628e4fb368f5044 \
+	file://licenses/RevisedBSD;md5=6084482a701110b5da4db5ec510a3856"
 
 # Do not execute target program while cross compile
 # and do not build help
@@ -28,7 +31,8 @@ SRC_URI += "\
 	file://pacemaker-do-not-execute-target-program-while-cross-.patch \
 	file://pacemaker-do-not-build-help.patch"
 
-EXTRA_OECONF += "--disable-fatal-warnings --libexecdir=${libdir}"
+EXTRA_OECONF += "--disable-fatal-warnings --libexecdir=${libdir} \
+                 ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '--enable-systemd', '', d)}"
 
 inherit autotools-brokensep pkgconfig useradd
 
@@ -180,6 +184,7 @@ FILES_${PN}-remote = "\
 	"
 FILES_${PN}-resource-agents = "\
 	${libdir}/ocf/resource.d/.isolation \
+	${libdir}/ocf/resource.d/${BPN}/attribute \
 	${libdir}/ocf/resource.d/${BPN}/ClusterMon \
 	${libdir}/ocf/resource.d/${BPN}/Dummy \
 	${libdir}/ocf/resource.d/${BPN}/HealthCPU \
