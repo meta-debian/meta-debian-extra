@@ -14,11 +14,11 @@ DEBIAN_GIT_BRANCH = "jessie-backports-master"
 inherit debian-package
 
 PR = "r0"
-PV = "2.2.0"
+PV = "2.3.2"
 LICENSE = "GPLv2+ & MIT"
 LIC_FILES_CHKSUM = "\
 	file://COPYING;md5=751419260aa954499f7abaabaa882bbe \
-	file://modules/orderedset.py;endline=20;md5=d197d7a986883ab3cb2d725327b806e9 \
+	file://crmsh/orderedset.py;endline=20;md5=d197d7a986883ab3cb2d725327b806e9 \
 	"
 
 DEPENDS += "pacemaker debconf"
