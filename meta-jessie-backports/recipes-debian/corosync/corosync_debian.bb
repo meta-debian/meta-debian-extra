@@ -30,6 +30,7 @@ inherit autotools pkgconfig
 
 # Follow debian/rules
 EXTRA_OECONF = " \
+	--with-configdir=${sysconfdir}/default \
 	--with-logdir=${localstatedir}/log/corosync \
 	--enable-dbus \
 	--enable-augeas \
