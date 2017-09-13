@@ -41,13 +41,11 @@ LIC_FILES_CHKSUM = "\
 # skip creating fence_kdump.8 to enable cross build
 SRC_URI += "file://0001-skip-creating-fence_kdump.8.patch"
 
-# Enable to specify python binary
-do_configure_prepend() {
-	sed -i -e "156i\AM_PATH_PYTHON(,, :)" ${S}/configure.ac
-}
-
-do_compile_prepend() {
-	find ${S}/fence/agents/lib -name "*.py" -exec sed -i -e "s|#!/usr/bin/python.*$|#!/usr/bin/env python|" {} \;
+do_install_append_class-target() {
+	# ${PYTHON} is python-native, so it should be replaced in target
+	find ${D}${sbindir} ${D}${datadir}/fence ${D}${datadir}/cluster \
+	\( -name "*.py" -or -name "fence_*" \) \
+	-exec sed -i -e "1s|${PYTHON}|${bindir}/python|" {} \;
 }
 
 FILES_${PN} += "/run ${datadir}"
