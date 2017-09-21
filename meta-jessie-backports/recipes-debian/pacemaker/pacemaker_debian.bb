@@ -65,6 +65,9 @@ do_install_append() {
 	       ${D}${libdir}/*.a
 	install -D -m 644 ${S}/mcp/pacemaker.sysconfig \
 	      ${D}${sysconfdir}/default/pacemaker
+
+	# Base on debian/pacemaker-common.dirs
+	install -d ${D}${sysconfdir}/pacemaker
 }
 
 PACKAGES =+ "\
