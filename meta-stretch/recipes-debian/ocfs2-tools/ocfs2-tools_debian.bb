@@ -23,7 +23,7 @@ inherit autotools-brokensep pkgconfig
 #follow debian/rules
 EXTRA_OECONF += "--disable-debug --enable-dynamic-ctl --enable-dynamic-fsck"
 
-DEPENDS += "e2fsprogs util-linux glib-2.0 libaio dlm"
+DEPENDS += "e2fsprogs e2fsprogs-native util-linux glib-2.0 libaio dlm"
 
 oe_runconf_prepend() {
 	#correct path to header file Python.h
