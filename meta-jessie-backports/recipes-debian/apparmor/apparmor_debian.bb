@@ -109,6 +109,9 @@ do_install() {
 
 	cp -rf ${S}/debian/etc/apache2/	${D}${sysconfdir}/
 	rm -rf ${D}${bindir}/aa-enabled ${D}${localstatedir}
+
+	# from debian/apparmor.dirs
+	install -d -m 0700 ${D}${sysconfdir}/${PN}.d/cache
 }
 
 PACKAGES =+ "${PN}-easyprof ${PN}-notify libapache2-mod-apparmor ${PN}-profiles ${PN}-utils \
