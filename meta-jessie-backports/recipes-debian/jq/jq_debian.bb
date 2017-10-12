@@ -15,15 +15,14 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING;md5=29dd0c35d7e391bb8d515eacf7592e00"
 
 PR = "r0"
-PV = "1.5+dfsg-1.3"
+PV = "1.5+dfsg"
 
 # Override value of DEBIAN_GIT_BRANCH variable in debian-package class
 DEBIAN_GIT_BRANCH = "jessie-backports-master"
 
 PACKAGES =+ "lib${PN}"
 
-DEPENDS_${PN} =+ "libonig-dev"
-DEPENDS_lib${PN} =+ "libonig-dev"
+DEPENDS += "libonig"
 
 RDEPENDS_${PN} =+ "libonig"
 RDEPENDS_lib${PN} =+ "libonig"
