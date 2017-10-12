@@ -33,6 +33,7 @@ FILES_${PN} = "${bindir}/jq \
 FILES_lib${PN} = "${libdir}/*${SOLIBS} \
 "
 
+DEBIAN_PATCH_TYPE = "nopatch"
 
 # Package name of libjq is libjq1, which is not adopted the debian 
 # package name conventions.
