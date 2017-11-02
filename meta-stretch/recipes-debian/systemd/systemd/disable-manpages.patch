@@ -1,0 +1,29 @@
+From cc17877946e41e0412d9fc6a37f148aabcdcbacc Mon Sep 17 00:00:00 2001
+From: Michael Biebl <biebl@debian.org>
+Date: Sun, 30 Apr 2017 13:00:32 +0200
+Subject: [PATCH] build-sys: don't generate index.html with --disable-manpages
+
+Don't generate man/index.html and the dependent man/systemd.index.html
+if man pages have been disabled.
+
+Closes #5854
+---
+ Makefile.am | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Makefile.am b/Makefile.am
+index 11b539da9b..d565978266 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -749,9 +749,11 @@ man/index.html: man/systemd.index.html
+ 	$(AM_V_LN)$(LN_S) -f systemd.index.html $@
+ 
+ if HAVE_PYTHON
++if ENABLE_MANPAGES
+ noinst_DATA += \
+ 	man/index.html
+ endif
++endif
+ 
+ CLEANFILES += \
+ 	man/index.html
