@@ -37,6 +37,8 @@ EXTRA_OECONF += "--disable-fatal-warnings --libexecdir=${libdir} \
 inherit autotools-brokensep pkgconfig useradd
 
 DEPENDS += "util-linux glib-2.0 libxslt corosync libqb libesmtp systemd dbus"
+DEPENDS += "cluster-glue bzip2 gnutls libtool ncurses libpam lm-sensors net-snmp libxml2 pkgconfig"
+TARGET_CPPFLAGS += "-I${STAGING_INCDIR}/heartbeat"
 
 # Base on debian/pacemaker-common.postinst
 USERADD_PACKAGES = "${PN}-common"
