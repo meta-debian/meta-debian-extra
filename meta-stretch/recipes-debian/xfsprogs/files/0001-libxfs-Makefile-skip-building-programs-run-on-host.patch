@@ -1,0 +1,39 @@
+From c8c4f040375f59dccb9e7b5875385a759f18e6e8 Mon Sep 17 00:00:00 2001
+From: Toshiko YOSHIDA <toshiko.yoshida@toshiba.co.jp>
+Date: Tue, 14 Nov 2017 14:13:00 +0900
+Subject: [PATCH] libxfs: Makefile skip building programs run on host
+
+Signed-off-by: Toshiko YOSHIDA <toshiko.yoshida@toshiba.co.jp>
+---
+ libxfs/Makefile | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
+
+diff --git a/libxfs/Makefile b/libxfs/Makefile
+index 6499731..fd509a9 100644
+--- a/libxfs/Makefile
++++ b/libxfs/Makefile
+@@ -123,10 +123,8 @@ LDIRT = gen_crc32table crc32table.h crc32selftest
+ default: crc32selftest ltdepend $(LTLIBRARY)
+ 
+ crc32table.h: gen_crc32table.c
+-	@echo "    [CC]     gen_crc32table"
+-	$(Q) $(BUILD_CC) $(CFLAGS) -o gen_crc32table $<
+ 	@echo "    [GENERATE] $@"
+-	$(Q) ./gen_crc32table > crc32table.h
++	$(Q) gen_crc32table > crc32table.h
+ 
+ # The selftest binary will return an error if it fails. This is made a
+ # dependency of the build process so that we refuse to build the tools on broken
+@@ -135,8 +133,7 @@ crc32table.h: gen_crc32table.c
+ # disk.
+ crc32selftest: gen_crc32table.c crc32table.h crc32.c
+ 	@echo "    [TEST]    CRC32"
+-	$(Q) $(BUILD_CC) $(CFLAGS) -D CRC32_SELFTEST=1 crc32.c -o $@
+-	$(Q) ./$@
++	$(Q) $@
+ 
+ # set up include/xfs header directory
+ include $(BUILDRULES)
+-- 
+2.1.4
+
