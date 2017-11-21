@@ -27,6 +27,12 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=cd9523181d9d4fbf7ffca52eaa2a5751"
 DEPENDS_${PN} =+ "python  libgcc libstdc++"
 RDEPENDS_${PN} =+ "python libgcc libstdc++"
 
+do_install_append() {
+	rm -f ${D}${PYTHON_SITEPACKAGES_DIR}/msgpack/*.pyc
+	rm -fr ${D}${PYTHON_SITEPACKAGES_DIR}/msgpack_python-${PV}-py2.7.egg-info
+	rm -fr ${D}/usr/share/doc/python-msgpack
+}
+
 FILES_${PN} = " \
 	${PYTHON_SITEPACKAGES_DIR}/msgpack/__init__.py \
 	${PYTHON_SITEPACKAGES_DIR}/msgpack/_packer.x86_64-linux-gnu.so \
@@ -34,7 +40,9 @@ FILES_${PN} = " \
 	${PYTHON_SITEPACKAGES_DIR}/msgpack/_version.py \
 	${PYTHON_SITEPACKAGES_DIR}/msgpack/exceptions.py \
 	${PYTHON_SITEPACKAGES_DIR}/msgpack/fallback.py \
-	${PYTHON_SITEPACKAGES_DIR}/msgpack_python-0.4.6.egg-info/PKG-INFO \
-	${PYTHON_SITEPACKAGES_DIR}/msgpack_python-0.4.6.egg-info/dependency_links.txt \
-	${PYTHON_SITEPACKAGES_DIR}/msgpack_python-0.4.6.egg-info/top_level.txt \
+	${PYTHON_SITEPACKAGES_DIR}/msgpack/_unpacker.so \
+	${PYTHON_SITEPACKAGES_DIR}/msgpack/_packer.so \
 "
+
+DEBIANNAME_${PN} = "python-msgpack"
+DEBIAN_NOAUTONAME_python-msgpack = "1"
