@@ -21,7 +21,7 @@ export BUILD_SYS
 export HOST_SYS
 
 # License information
-LICENSE = "ASFv2"
+LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://COPYING;md5=cd9523181d9d4fbf7ffca52eaa2a5751"
 
 DEPENDS_${PN} =+ "python  libgcc libstdc++"
