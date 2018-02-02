@@ -30,12 +30,14 @@ export STAGING_INCDIR
 export STAGING_LIBDIR
 export BUILD_SYS
 export HOST_SYS
+export DEB_HOST_MULTIARCH
 
 # These are needed for --with-perl
 # Env var which tells perl if it should use host (no) or target (yes) settings
 export PERLCONFIGTARGET = "${@is_target(d)}"
 
 # Env var which tells perl where the perl include files are
+PERL_OWN_DIR_class-target = "/${@os.path.relpath(nonarch_libdir, libdir)}"
 export PERL_INC = "${STAGING_LIBDIR}${PERL_OWN_DIR}/perl/${@get_perl_version(d)}/CORE"
 export PERL_LIB = "${STAGING_LIBDIR}${PERL_OWN_DIR}/perl/${@get_perl_version(d)}"
 export PERL_ARCHLIB = "${STAGING_LIBDIR}${PERL_OWN_DIR}/perl/${@get_perl_version(d)}"
@@ -97,15 +99,15 @@ do_install() {
 	cp -r ${S}/profiles/apparmor.d/ ${D}${sysconfdir}/
 	install -m 0755 ${S}/debian/apparmor.init ${D}${sysconfdir}/init.d/apparmor
 	install -m 0644 ${S}/debian/apparmor.upstart ${D}${sysconfdir}/init/apparmor.conf
-	install -m 0644 ${S}/debian/lib/apparmor/functions ${D}${base_libdir}/${PN}/
+	install -m 0644 ${S}/debian/lib/apparmor/functions ${D}${nonarch_base_libdir}/${PN}/
 
 	install -m 0644 ${S}/debian/notify/apparmor-notify.desktop ${D}${sysconfdir}/xdg/autostart/
 	mv ${D}${sbindir}/aa-notify ${D}${bindir}/
 	mv ${D}${bindir}/aa-exec ${D}${sbindir}/
 
-	install -d ${D}${libdir}/perl5/"$(echo ${PERLVERSION} | cut -d . -f 1,2)"
-	mv ${D}${libdir}/perl/*/*/* ${D}${libdir}/perl5/"$(echo ${PERLVERSION} | cut -d . -f 1,2)"
-	rm -rf ${D}${libdir}/perl/
+	install -d ${D}${nonarch_libdir}/perl5/"$(echo ${@get_perl_version(d)} | cut -d . -f 1,2)"
+	mv ${D}${nonarch_libdir}/perl/*/*/* ${D}${nonarch_libdir}/perl5/"$(echo ${@get_perl_version(d)} | cut -d . -f 1,2)"
+	rm -rf ${D}${nonarch_libdir}/perl/
 
 	cp -rf ${S}/debian/etc/apache2/	${D}${sysconfdir}/
 	rm -rf ${D}${bindir}/aa-enabled ${D}${localstatedir}
@@ -117,7 +119,7 @@ do_install() {
 PACKAGES =+ "${PN}-easyprof ${PN}-notify libapache2-mod-apparmor ${PN}-profiles ${PN}-utils \
 libapparmor-dev libapparmor-perl libapparmor libpam-apparmor python-apparmor python-libapparmor "
 
-FILES_${PN} =+ " ${base_libdir}/${PN}/* "
+FILES_${PN} =+ " ${nonarch_base_libdir}/${PN}/* "
 
 FILES_${PN}-easyprof = " \
 	${sysconfdir}/${PN}/easyprof.conf \
@@ -170,15 +172,15 @@ FILES_libapparmor-dev = " \
 	${libdir}/pkgconfig/* \
 "
 
-FILES_libapparmor-perl = " ${libdir}/perl5/* "
+FILES_libapparmor-perl = " ${nonarch_libdir}/perl5/* "
 
 FILES_libapparmor = " ${libdir}/*${SOLIBS} "
 
-FILES_libpam-apparmor = " ${base_libdir}/security/ "
+FILES_libpam-apparmor = " ${nonarch_base_libdir}/security/ "
 
-FILES_python-apparmor = " ${libdir}/${PYTHON_DIR}/dist-packages/apparmor* "
+FILES_python-apparmor = " ${PYTHON_SITEPACKAGES_DIR}/apparmor* "
 
-FILES_python-libapparmor = " ${libdir}/${PYTHON_DIR}/dist-packages/* "
+FILES_python-libapparmor = " ${PYTHON_SITEPACKAGES_DIR}/* "
 
 DEBIANNAME_libapparmor = "libapparmor1"
 RPROVIDES_libapparmor += " libapparmor1"
