@@ -23,6 +23,7 @@ RDEPENDS_${PN} = "\
 	python-pexpect \
 	python-pycurl \
 	python \
+	python-suds \
 	"
 RRECOMMENDS_${PN} += "\
 	libnet-telnet-perl \
@@ -31,7 +32,6 @@ RRECOMMENDS_${PN} += "\
 	"
 RSUGGESTS_${PN} = "\
 	python-requests \
-	python-suds \
 	"
 LICENSE = "GPL-2+ & LGPL-2.1+"
 LIC_FILES_CHKSUM = "\
