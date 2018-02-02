@@ -57,7 +57,7 @@ pkg_postinst_${PN}-common() {
 do_install_append() {
 	# Base on debian/rules
 	rm -rf ${D}${datadir}/${BPN}/tests \
-	       ${D}${libdir}/python* \
+	       ${D}${nonarch_libdir}/python* \
 	       ${D}${docdir}/${BPN}/COPYING \
 	       ${D}${docdir}/${BPN}/COPYING.LIB \
 	       ${D}${libdir}/service_crm.so \
@@ -188,21 +188,21 @@ FILES_${PN}-remote = "\
 	${sbindir}/pacemaker_remoted \
 	"
 FILES_${PN}-resource-agents = "\
-	${libdir}/ocf/resource.d/.isolation \
-	${libdir}/ocf/resource.d/${BPN}/attribute \
-	${libdir}/ocf/resource.d/${BPN}/ClusterMon \
-	${libdir}/ocf/resource.d/${BPN}/Dummy \
-	${libdir}/ocf/resource.d/${BPN}/HealthCPU \
-	${libdir}/ocf/resource.d/${BPN}/HealthSMART \
-	${libdir}/ocf/resource.d/${BPN}/Stateful \
-	${libdir}/ocf/resource.d/${BPN}/SysInfo \
-	${libdir}/ocf/resource.d/${BPN}/SystemHealth \
-	${libdir}/ocf/resource.d/${BPN}/ping* \
+	${nonarch_libdir}/ocf/resource.d/.isolation \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/attribute \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/ClusterMon \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/Dummy \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/HealthCPU \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/HealthSMART \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/Stateful \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/SysInfo \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/SystemHealth \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/ping* \
 	"
 FILES_${PN} += "\
-	${libdir}/ocf/resource.d/${BPN}/o2cb \
-	${libdir}/ocf/resource.d/${BPN}/controld \
-	${libdir}/ocf/resource.d/${BPN}/remote \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/o2cb \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/controld \
+	${nonarch_libdir}/ocf/resource.d/${BPN}/remote \
 	${systemd_system_unitdir}/pacemaker.service \
 	"
 FILES_${PN}-dbg += "\
