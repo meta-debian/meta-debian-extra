@@ -34,14 +34,13 @@ do_install_append () {
 
     install -d ${D}${sysconfdir}
     install -d ${D}${sysconfdir}/init.d
-    install -d ${D}${base_libdir}
-    install -d ${D}${systemd_unitdir}/system
+    install -d ${D}${systemd_system_unitdir}
     install -m 0755 ${S}/debian/open-isns-discoveryd.isnsdd.init ${D}${sysconfdir}/init.d/isnsdd
     install -m 0755 ${S}/debian/open-isns-server.isnsd.init ${D}${sysconfdir}/init.d/isnsd
-    install -m 0755 ${S}/debian/extra/isnsdd.service ${D}${systemd_unitdir}/system/isnsdd.service
-    install -m 0755 ${S}/debian/extra/isnsd.service ${D}${systemd_unitdir}/system/isnsd.service
+    install -m 0755 ${S}/debian/extra/isnsdd.service ${D}${systemd_system_unitdir}/isnsdd.service
+    install -m 0755 ${S}/debian/extra/isnsd.service ${D}${systemd_system_unitdir}/isnsd.service
 
-    rm -rf ${D}${libdir}/systemd
+    rm -rf ${D}${nonarch_libdir}/systemd
 }
 
 PACKAGES =+ "libisns0 libisns-dev ${PN}-discoveryd ${PN}-server ${PN}-utils"
@@ -53,10 +52,10 @@ RDEPENDS_libisns-dev += "libisns0"
 DEPENDS_libisns-dev += "libisns-nocrypto"
 INSANE_SKIP_libisns-dev += "staticdev"
 
-FILES_${PN}-discoveryd = "${sbindir}/isnsdd ${sysconfdir}/init.d/isnsdd ${sysconfdir}/isns/isnsdd.conf ${base_libdir}/systemd/system/isnsdd.service"
+FILES_${PN}-discoveryd = "${sbindir}/isnsdd ${sysconfdir}/init.d/isnsdd ${sysconfdir}/isns/isnsdd.conf ${systemd_system_unitdir}/isnsdd.service"
 RDEPENDS_${PN}-discoveryd += "libisns0 ${PN}-utils"
 
-FILES_${PN}-server = "${sbindir}/isnsd ${sysconfdir}/isns/isnsd.conf ${sysconfdir}/init.d/isnsd ${base_libdir}/systemd/system/isnsd.service"
+FILES_${PN}-server = "${sbindir}/isnsd ${sysconfdir}/isns/isnsd.conf ${sysconfdir}/init.d/isnsd ${systemd_system_unitdir}/isnsd.service"
 RDEPENDS_${PN}-server += "libisns0 ${PN}-utils"
 
 FILES_${PN}-utils = "${sysconfdir}/isns/isnsadm.conf ${sbindir}/isnsadm"

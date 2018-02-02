@@ -44,7 +44,7 @@ EXTRA_OECONF = "--enable-pie \
 inherit autotools
 
 do_install_append() {
-	rm -rf ${D}${libdir}/sysusers.d
+	rm -rf ${D}${nonarch_libdir}/sysusers.d
 
 	install -d ${D}${sysconfdir}/default
 	install -m install -m 644 ${S}/debian/lldpd.default ${D}${sysconfdir}/default/lldpd
@@ -61,7 +61,7 @@ USERADD_PARAM_${PN} = "-r -g _lldpd --home /var/run/lldpd --no-create-home _lldp
 
 FILES_${PN} += "${datadir}/bash-completion/completions/lldpcli \
 		${datadir}/zsh/vendor-completions/_lldpcli \
-		${base_libdir}/systemd/system/lldpd.service \
+		${systemd_system_unitdir}/lldpd.service \
 		${sysconfdir}/default/lldpd \
 		${sysconfdir}/init/lldpd.conf \
 		${sysconfdir}/init.d/lldpd"

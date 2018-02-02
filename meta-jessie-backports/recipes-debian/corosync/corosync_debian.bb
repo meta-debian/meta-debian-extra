@@ -161,14 +161,14 @@ FILES_${PN}-qdevice = "\
 	${sysconfdir}/init.d/${PN}-qdevice \
 	${sysconfdir}/${PN}/qdevice \
 	${sysconfdir}/default/${PN}-qdevice \
-	${base_libdir}/systemd/system/${PN}-qdevice.service \
+	${systemd_system_unitdir}/${PN}-qdevice.service \
 	${sbindir}/${PN}-qdevice* \
 	/run/${PN}-qdevice"
 FILES_${PN}-qnetd = "\
 	${sysconfdir}/init.d/${PN}-qnetd \
 	${sysconfdir}/${PN}/qnetd \
 	${sysconfdir}/default/${PN}-qnetd \
-	${base_libdir}/systemd/system/${PN}-qnetd.service \
+	${systemd_system_unitdir}/${PN}-qnetd.service \
 	${bindir}/${PN}-qnetd* \
 	/run/${PN}-qnetd"
 FILES_${PN} += "\

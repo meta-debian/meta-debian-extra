@@ -32,4 +32,4 @@ do_install_append() {
 			${D}${systemd_system_unitdir}/ipmievd.service
 }
 
-FILES_${PN} += "${base_libdir}/* ${libdir}/*"
+FILES_${PN} += "${systemd_system_unitdir}/* ${libdir}/*"
