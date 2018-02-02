@@ -25,3 +25,4 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=241615fe24b899ca6b6d20b9c4b5dbbd"
 # Workaround about installing python..
 export BUILD_SYS
 export HOST_SYS
+export DEB_HOST_MULTIARCH

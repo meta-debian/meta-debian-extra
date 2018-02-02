@@ -26,4 +26,4 @@ LIC_FILES_CHKSUM = "file://backports/ssl_match_hostname/LICENSE.txt;md5=27a27d83
 # Workaround for installing python packages.
 export BUILD_SYS
 export HOST_SYS
-
+export DEB_HOST_MULTIARCH
