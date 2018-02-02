@@ -28,6 +28,9 @@ export BUILD_SYS
 export HOST_SYS
 export STAGING_INCDIR
 export STAGING_LIBDIR
+export DEB_HOST_MULTIARCH
+
+DEBIAN_MULTILIB_MANUAL = "1"
 
 # base on debian/rules
 EXTRA_OECONF += "--docdir=${docdir}/${PN} --htmldir=${docdir}/${PN}/html"

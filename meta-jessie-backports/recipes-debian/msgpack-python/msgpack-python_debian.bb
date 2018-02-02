@@ -15,10 +15,11 @@ inherit debian-package
 PV = "0.4.6"
 inherit setuptools
 
-PYTHON_SITEPACKAGES_DIR = "${libdir}/${PYTHON_DIR}/dist-packages"
+DEBIAN_MULTILIB_MANUAL = "1"
 
 export BUILD_SYS
 export HOST_SYS
+export DEB_HOST_MULTIARCH
 
 # License information
 LICENSE = "Apache-2.0"

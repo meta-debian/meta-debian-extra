@@ -19,6 +19,7 @@ inherit autotools-brokensep pkgconfig useradd
 SRC_URI_append = " \
     file://0001-don-t-compile-doc-and-Error-Fix.patch \
 "
+DEBIAN_MULTILIB_MANUAL = "1"
 
 EXTRA_OECONF += "\
 	--enable-upstart --with-ocf-root=${libdir}/ocf\

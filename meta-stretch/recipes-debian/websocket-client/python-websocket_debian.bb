@@ -9,6 +9,8 @@ RDEPENDS_${PN} += "python python-six"
 
 PYTHON_SITEPACKAGES_DIR = "${libdir}/${PYTHON_DIR}/dist-packages"
 
+DEBIAN_MULTILIB_MANUAL = "1"
+
 do_install_append() {
 	install -m 755 ${D}/${bindir}/wsdump.py ${D}/${bindir}/python2-wsdump
 	rm ${D}/${bindir}/wsdump.py

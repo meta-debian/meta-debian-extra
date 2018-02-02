@@ -23,6 +23,9 @@ PYTHON_SITEPACKAGES_DIR = "${libdir}/${PYTHON_DIR}/dist-packages"
 
 export BUILD_SYS
 export HOST_SYS
+export DEB_HOST_MULTIARCH
+
+DEBIAN_MULTILIB_MANUAL = "1"
 
 do_install_append() {
 	mv ${D}/${PYTHON_SITEPACKAGES_DIR}/ipaddress-${PV}-py2.7.egg-info ${D}/${PYTHON_SITEPACKAGES_DIR}/ipaddress-${PV}.egg-info

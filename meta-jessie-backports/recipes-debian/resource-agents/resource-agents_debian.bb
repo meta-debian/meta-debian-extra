@@ -8,7 +8,7 @@ HOMEPAGE = "https://github.com/ClusterLabs/resource-agents"
 DEBIAN_GIT_BRANCH = "jessie-backports-master"
 
 inherit debian-package
-PV = "3.9.7"
+PV = "4.0.0~rc1"
 
 LICENSE = "GPLv2+ & GPLv3 & LGPLv2+"
 LIC_FILES_CHKSUM = "\
@@ -25,6 +25,8 @@ DEPENDS += "cluster-glue glib-2.0 libnet libxslt"
 #	correct OCF_ROOT_DIR is ${libdir}/ocf
 SRC_URI += "file://Disable-build-doc_debian.patch \
             file://set-OCF_ROOT_DIR-to-libdir-ocf.patch"
+
+DEBIAN_MULTILIB_MANUAL = "1"
 
 EXTRA_OECONF += "--with-ocf-root=${libdir}/ocf \
                  --with-initdir=${sysconfdir}/init.d \

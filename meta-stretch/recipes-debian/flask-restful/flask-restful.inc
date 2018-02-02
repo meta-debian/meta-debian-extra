@@ -23,6 +23,9 @@ inherit setuptools
 #       TypeError: Can't convert 'NoneType' object to str implicitly
 export BUILD_SYS
 export HOST_SYS
+export DEB_HOST_MULTIARCH
+
+DEBIAN_MULTILIB_MANUAL = "1"
 
 do_install_append() {
 	# remove unwanted files
