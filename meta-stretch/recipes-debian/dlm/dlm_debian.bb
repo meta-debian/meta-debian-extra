@@ -22,9 +22,9 @@ do_install() {
 	oe_runmake install DESTDIR=${D} LIBNUM=${base_libdir}
 
 	# Base on debian/dlm-controld.install
-	install -d ${D}${base_libdir}
+	install -d ${D}${nonarch_base_libdir}
 	install -d ${D}${libdir}/modules-load.d
-	mv ${D}${libdir}/udev ${D}${base_libdir}
+	mv ${D}${nonarch_libdir}/udev ${D}${nonarch_base_libdir}
 	install -m 0644 ${S}/debian/configfs.conf \
 	                ${D}${libdir}/modules-load.d/configfs.conf
 
