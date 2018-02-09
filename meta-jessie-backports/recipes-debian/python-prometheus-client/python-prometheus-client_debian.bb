@@ -17,7 +17,7 @@ inherit setuptools
 
 DEBIAN_QUILT_PATCHES = ""
 
-DEBIAN_MULTILIB_MANUAL = "1"
+KEEP_NONARCH_BASELIB = "1"
 
 export BUILD_SYS
 export HOST_SYS

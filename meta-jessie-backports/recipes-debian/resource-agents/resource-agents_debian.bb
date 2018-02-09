@@ -26,7 +26,7 @@ DEPENDS += "cluster-glue glib-2.0 libnet libxslt"
 SRC_URI += "file://Disable-build-doc_debian.patch \
             file://set-OCF_ROOT_DIR-to-libdir-ocf.patch"
 
-DEBIAN_MULTILIB_MANUAL = "1"
+KEEP_NONARCH_BASELIB = "1"
 
 EXTRA_OECONF += "--with-ocf-root=${libdir}/ocf \
                  --with-initdir=${sysconfdir}/init.d \

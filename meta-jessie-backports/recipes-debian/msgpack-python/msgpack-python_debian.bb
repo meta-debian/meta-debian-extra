@@ -15,7 +15,7 @@ inherit debian-package
 PV = "0.4.6"
 inherit setuptools
 
-DEBIAN_MULTILIB_MANUAL = "1"
+KEEP_NONARCH_BASELIB = "1"
 
 export BUILD_SYS
 export HOST_SYS
