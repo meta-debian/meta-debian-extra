@@ -95,7 +95,6 @@ do_install() {
 	install -d ${D}${sysconfdir}/init.d/
 	install -d ${D}${sysconfdir}/init/
 	install -d ${D}${sysconfdir}/xdg/autostart/
-	install -d ${D}${libdir}/apache2/
 	cp -r ${S}/profiles/apparmor.d/ ${D}${sysconfdir}/
 	install -m 0755 ${S}/debian/apparmor.init ${D}${sysconfdir}/init.d/apparmor
 	install -m 0644 ${S}/debian/apparmor.upstart ${D}${sysconfdir}/init/apparmor.conf
@@ -162,7 +161,7 @@ FILES_libapache2-mod-apparmor = " \
 	${sysconfdir}/apache2/mods-available/apparmor.load \
 	${sysconfdir}/apparmor.d/local/usr.sbin.apache2 \
 	${sysconfdir}/apparmor.d/usr.sbin.apache2 \
-	${libdir}/apache2/modules/*${SOLIBSDEV} \
+	${nonarch_libdir}/apache2/modules/*${SOLIBSDEV} \
 "
 
 FILES_libapparmor-dev = " \
@@ -216,3 +215,10 @@ do_install_ptest() {
 	done
 	cp -rp ${S}/parser/tst/* ${D}${PTEST_PATH}
 }
+
+# pam_apparmor.so is installed in /lib/security while 'base_libdir' is /lib/<triplet>.
+# This is not issue. The QA Warning can be ignore:
+#   | apparmor-2.10.95-r0 do_package_qa: QA Issue: libpam-apparmor: found library in wrong location: /lib/security/pam_apparmor.so
+#   | apparmor-dbg: found library in wrong location: /lib/security/.debug/pam_apparmor.so [libdir]
+INSANE_SKIP_libpam-apparmor = "libdir"
+INSANE_SKIP_${PN}-dbg = "libdir"
