@@ -6,6 +6,9 @@ SUMMARY = "A System and service manager"
 HOMEPAGE = "http://www.freedesktop.org/wiki/Software/systemd"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+PV = "232"
+PROVIDES += "udev"
+
 # Override value of DEBIAN_GIT_BRANCH variable in debian-package class
 DEBIAN_GIT_BRANCH = "stretch-master"
 
@@ -14,14 +17,11 @@ LIC_FILES_CHKSUM = " \
 file://LICENSE.GPL2;md5=751419260aa954499f7abaabaa882bbe \
 file://LICENSE.LGPL2.1;md5=4fbd65380cdd255951079008b364516c \
 "
-PROVIDES = "udev"
-
 inherit debian-package
 
 SRC_URI += "file://disable-manpages.patch \
 "
 
-PV = "232"
 
 inherit pkgconfig autotools useradd python3native
 
@@ -94,18 +94,23 @@ do_configure_prepend() {
 
 # append debian extra files and remove unneeded files
 do_install_append() {
+	echo "do_install_append is called."
 	# systemd package: setup base_bindir
-	ln -s ${base_libdir}/systemd/systemd ${D}${base_bindir}
+	ln -s ${nonarch_base_libdir}/systemd/systemd ${D}${base_bindir}
 	# systemd package: setup sysconfdir
 	ln -s ../modules ${D}${sysconfdir}/modules-load.d/modules.conf
 	ln -s ../sysctl.conf ${D}${sysconfdir}/sysctl.d/99-sysctl.conf
 	for dir in binfmt.d kernel tmpfiles.d; do
-		rm -r ${D}${sysconfdir}/${dir}
+		if [ -d ${D}${sysconfdir}/${dir} ]; then
+			rm -rf ${D}${sysconfdir}/${dir}
+		fi
 	done
 	rm ${D}${sysconfdir}/init.d/README
 
 	for name in system-shutdown system-sleep systemd-update-done; do
-		rm -r ${D}${base_libdir}/systemd/${name}
+		if [ -d ${D}${nonarch_base_libdir}/systemd/${name} ]; then
+			rm -rf ${D}${nonarch_base_libdir}/systemd/${name}
+		fi
 	done
 	# systemd package: setup bindir
 	rm ${D}${bindir}/kernel-install
@@ -113,7 +118,13 @@ do_install_append() {
 	for dir in binfmt.d kernel modules-load.d rpm \
 	           systemd/network systemd/user-generators \
 	           tmpfiles.d/etc.conf; do
-		rm -r ${D}${libdir}/${dir}
+		if [ -f ${D}${libdir}/../${dir} -o -d ${D}${libdir}/../${dir} ]; then
+			echo "rm -rf ${D}${libdir}/../${dir}"
+			rm -rf ${D}${libdir}/../${dir}
+		else
+			echo "rm -rf ${D}${libdir}/${dir}"
+			rm -rf ${D}${libdir}/${dir}
+		fi
 	done
 
 	mv ${D}${datadir}/zsh/site-functions \
@@ -146,15 +157,13 @@ do_install_append() {
 	# udev package
 	install -d ${D}${sysconfdir}/init.d
 	install -m 0755 ${S}/debian/udev.init ${D}${sysconfdir}/init.d/udev
-	install -d ${D}${base_libdir}/modprobe.d
-	install -m 0644 ${S}/debian/extra/fbdev-blacklist.conf \
-		${D}${base_libdir}/modprobe.d/fbdev-blacklist.conf
+	install -d ${D}${nonarch_base_libdir}/modprobe.d
 	install -d ${D}${systemd_system_unitdir}/sysinit.target.wants
 	ln -s systemd-udevd.service \
 		${D}${systemd_system_unitdir}/udev.service
 	install -d ${D}${base_sbindir}
 	ln -s ${base_bindir}/udevadm ${D}${base_sbindir}
-	ln -s ${base_libdir}/systemd/systemd-udevd ${D}${base_sbindir}/udevd
+	ln -s ${nonarch_base_libdir}/systemd/systemd-udevd ${D}${base_sbindir}/udevd
 
 	# ship test-udev, so that we have it for autopkgtests
 	if [ -e ${B}/.libs/test-udev ]; then
@@ -165,7 +174,8 @@ do_install_append() {
 	
 	# follow debian/udev.install
 	cp -r ${S}/debian/extra/initramfs-tools ${D}${datadir}
-	cp -r ${S}/debian/extra/rules/*.rules ${D}${base_libdir}/udev/rules.d/
+	install -d ${D}${nonarch_base_libdir}/udev/rules.d/
+	cp -r ${S}/debian/extra/rules/*.rules ${D}${nonarch_base_libdir}/udev/rules.d/
 
 	install -D -m 0644 ${S}/debian/udev.upstart \
 	                   ${D}${sysconfdir}/init/udev.conf
@@ -178,23 +188,26 @@ do_install_append() {
 	install -d ${D}${sysconfdir}/udev/rules.d
 
 	#follow debian/systemd.install
-	install -d ${D}${base_libdir}/lsb \
-	           ${D}${sysconfdir}/dhcp
-	cp -r ${S}/debian/extra/init-functions.d ${D}${base_libdir}/lsb/
-	cp -r ${S}/debian/extra/tmpfiles.d/*.conf ${D}${libdir}/tmpfiles.d/
-	cp -r ${S}/debian/extra/systemd-sysv-install ${D}${base_libdir}/systemd/
+	install -d ${D}${nonarch_base_libdir}/lsb \
+	           ${D}${sysconfdir}/dhcp \
+		   ${D}${nonarch_libdir}/tmpfiles.d \
+		   ${D}${nonarch_base_libdir}/systemd
+
+	cp -r ${S}/debian/extra/init-functions.d ${D}${nonarch_base_libdir}/lsb/
+	cp -r ${S}/debian/extra/tmpfiles.d/*.conf ${D}${nonarch_libdir}/tmpfiles.d/
+	cp -r ${S}/debian/extra/systemd-sysv-install ${D}${nonarch_base_libdir}/systemd/
 	cp -r ${S}/debian/extra/units/* ${D}${systemd_system_unitdir}/
 	cp -r ${S}/debian/extra/dhclient-exit-hooks.d \
 	      ${D}${sysconfdir}/dhcp/
 
 	# systemd-sysv
-	ln -s ../${base_libdir}/systemd/systemd  ${D}${base_sbindir}/init
-	ln -s ../${base_bindir}/systemctl ${D}${base_sbindir}/halt
-	ln -s ../${base_bindir}/systemctl ${D}${base_sbindir}/poweroff
-	ln -s ../${base_bindir}/systemctl ${D}${base_sbindir}/reboot
-	ln -s ../${base_bindir}/systemctl ${D}${base_sbindir}/runlevel
-	ln -s ../${base_bindir}/systemctl ${D}${base_sbindir}/shutdown
-	ln -s ../${base_bindir}/systemctl ${D}${base_sbindir}/telinit
+	ln -s ../${nonarch_base_libdir}/systemd/systemd  ${D}${base_sbindir}/init
+	ln -s ../${nonarch_base_bindir}/systemctl ${D}${base_sbindir}/halt
+	ln -s ../${nonarch_base_bindir}/systemctl ${D}${base_sbindir}/poweroff
+	ln -s ../${nonarch_base_bindir}/systemctl ${D}${base_sbindir}/reboot
+	ln -s ../${nonarch_base_bindir}/systemctl ${D}${base_sbindir}/runlevel
+	ln -s ../${nonarch_base_bindir}/systemctl ${D}${base_sbindir}/shutdown
+	ln -s ../${nonarch_base_bindir}/systemctl ${D}${base_sbindir}/telinit
 	
 	# Make sure the runlevel services are known by systemd so their targets
 	# get launched. See https://bugzilla.redhat.com/show_bug.cgi?id=1002806
@@ -215,10 +228,10 @@ do_install_append() {
 	fi
 
 	# remove unwanted files
-	rm -rf ${D}${base_sbindir}/udevd \
+	rm -rf ${D}${nonarch_base_sbindir}/udevd \
 	       ${D}${sysconfdir}/X11 \
-	       ${D}${libdir}/sysctl.d/50-default.conf \
-	       ${D}${base_libdir}/systemd/libsystemd-shared.so \
+	       ${D}${nonarch_libdir}/sysctl.d/50-default.conf \
+	       ${D}${nonarch_base_libdir}/systemd/libsystemd-shared.so \
 	       ${D}${datadir}/factory/ \
 	       ${D}${datadir}/bash-completion/completions/kernel-install \
 	       ${D}${systemd_system_unitdir}/halt-local.service
@@ -232,14 +245,22 @@ do_install_append() {
         # remove symlinks enabling default-on services
         rm -rf ${D}${sysconfdir}/systemd/system/*.target.wants/
         # FIXME: generate proper sysusers.d/basic.conf for Debian, and add autopkgtest
-        rm -rf ${D}${libdir}/sysusers.d/*
+        rm -rf ${D}${nonarch_libdir}/sysusers.d
         rm -f ${D}${systemd_system_unitdir}/*sysusers*.service \
 	      ${D}${systemd_system_unitdir}/*/*sysusers*.service
+
+	# remove unnecessary la files. 
+	for i in libnss_resolve libnss_myhostname libnss_mymachines libnss_systemd; do
+		rm -f ${D}${base_libdir}/${i}.la
+	done
+	rm -fr ${D}${nonarch_base_libdir}/modprobe.d ${D}${base_libdir}/modprobe.d
 }
+
 
 PACKAGES =+ "libnss-myhostname \
              libnss-mymachines \
              libnss-resolve \
+             libnss-systemd \
              libsystemd-dev \
              libsystemd \
              ${@bb.utils.contains('DISTRO_FEATURES', 'pam', 'libpam-systemd', '', d)} \
@@ -254,6 +275,7 @@ PACKAGES =+ "libnss-myhostname \
 FILES_libnss-myhostname = "${base_libdir}/libnss_myhostname${SOLIBS}"
 FILES_libnss-mymachines = "${base_libdir}/libnss_mymachines${SOLIBS}"
 FILES_libnss-resolve = "${base_libdir}/libnss_resolve${SOLIBS}"
+FILES_libnss-systemd = "${base_libdir}/libnss_systemd${SOLIBS}"
 FILES_systemd-container = "${base_bindir}/machinectl \
                            ${sysconfdir}/dbus-1/system.d/org.freedesktop.import1.conf \
                            ${sysconfdir}/dbus-1/system.d/org.freedesktop.machine1.conf \
@@ -283,6 +305,7 @@ FILES_systemd-container = "${base_bindir}/machinectl \
                            ${datadir}/zsh/vendor-completions/_sd_machines \
                            ${datadir}/zsh/vendor-completions/_systemd-nspawn \
                           "
+
 FILES_systemd-coredump = "${sysconfdir}/systemd/coredump.conf \
                           ${systemd_system_unitdir}/sockets.target.wants/systemd-coredump.socket \
                           ${systemd_system_unitdir}/systemd-coredump* \
@@ -301,23 +324,69 @@ FILES_systemd-journal-remote = "${sysconfdir}/systemd/journal-remote.conf \
                                 ${libdir}/tmpfiles.d/systemd-remote.conf \
                                "
 FILES_${PN} = "${base_bindir} \
-               ${bindir} \
-               ${base_libdir} \
                ${libdir} \
                ${datadir} \
-               ${sysconfdir}/dbus-1 \
+               ${sysconfdir}/* \
+               ${sysconfdir}/dbus-1/system.d/*.conf \
                ${sysconfdir}/modules-load.d/modules.conf \
                ${@bb.utils.contains('DISTRO_FEATURES', 'pam', '${sysconfdir}/pam.d/systemd-user', '', d)} \
                ${sysconfdir}/sysctl.d/99-sysctl.conf \
-               ${sysconfdir}/systemd \
-               ${sysconfdir}/xdg \
-               ${sysconfdir}/dhcp \
+               ${sysconfdir}/systemd/*.conf \
+               ${sysconfdir}/xdg/systemd/user \
+               ${nonarch_libdir}/tmpfiles.d \
+               ${nonarch_libdir}/tmpfiles.d/*.conf \
+               ${sysconfdir}/dhcp/dhclient-exit-hooks.d/timesyncd \
+               ${systemd_system_unitdir}/getty.target.wants/* \
+               ${systemd_system_unitdir}/graphical.target.wants/* \
+               ${systemd_system_unitdir}/local-fs.target.wants/* \
+               ${systemd_system_unitdir}/multi-user.target.wants/* \
+               ${systemd_system_unitdir}/rescue.target.wants/systemd-update-utmp-runlevel.service \
+               ${systemd_system_unitdir}/sysinit.target \
+               ${systemd_system_unitdir}/sysinit.target.want/* \
+               ${systemd_system_unitdir}/*.socket \
+               ${systemd_system_unitdir}/*.target \
+               ${systemd_system_unitdir}/*.service \
+               ${systemd_system_unitdir}/* \
+               ${systemd_system_unitdir}/systemd-resolved.service.d/resolvconf.conf \
+               ${systemd_system_unitdir}/timers.target.wants/*.timer \
+               ${nonarch_base_libdir}/lsb/init-functions.d/40-systemd \
+               ${nonarch_base_libdir}/systemd/resolv.conf \
+               ${nonarch_base_libdir}/systemd/libsystemd-shared-${PV}.so \
+               ${nonarch_base_libdir}/systemd/* \
+               ${nonarch_base_libdir}/udev/rules.d/70-uaccess.rules \
+               ${nonarch_base_libdir}/udev/rules.d/71-seat.rules \
+               ${nonarch_base_libdir}/udev/rules.d/73-seat-late.rules \
+               ${nonarch_base_libdir}/udev/rules.d/99-systemd.rules \
+               ${nonarch_base_libdir}/systemd/system-generators \
+               ${nonarch_base_libdir}/systemd/system-generators/*generator \
+               ${nonarch_libdir}/systemd/system-preset/* \
+               ${nonarch_libdir}/systemd/catalog/*.catalog \
+               ${nonarch_libdir}/systemd/user/*.target \
+               ${nonarch_libdir}/systemd/user/*.service \
+               ${nonarch_libdir}/tmpfiles.d/*.conf \
+               ${nonarch_libdir}/systemd/boot/efi/* \
+               ${datadir}/bug/systemd/* \
+               ${datadir}/dbus-1/services/* \
+               ${datadir}/dbus-1/system-services/* \
+               ${datadir}/polkit-1/actions/*.policy \
+               ${datadir}/locale/*/LC_MESSAGES/systemd.mo \
+               ${datadir}/systemd/* \
+               ${datadir}/bash-completion/completions/* \
+               ${datadir}/zsh/vendor-completions/* \ 
+               ${bindir}/bootctl \
+               ${bindir}/busctl \
+               ${bindir}/hostnamectl \
+               ${bindir}/kernel-install \
+               ${bindir}/localectl \
+               ${bindir}/systemd-* \
+               ${bindir}/timedatectl \
+               ${nonarch_libdir}/sysctl.d/50-coredump.conf \
               "
-FILES_${PN}-dbg += "${base_libdir}/systemd/.debug \
-                    ${base_libdir}/systemd/system-generators/.debug \
-                    ${base_libdir}/udev/.debug \
-                    ${libdir}/udev/.debug \
-                    ${@bb.utils.contains('DISTRO_FEATURES', 'pam', '${base_libdir}/security/.debug/pam_systemd.so', '', d)} \
+FILES_${PN}-dbg += "${nonarch_base_libdir}/systemd/.debug \
+                    ${nonarch_base_libdir}/systemd/system-generators/.debug \
+                    ${nonarch_base_libdir}/udev/.debug \
+                    ${nonarch_libdir}/udev/.debug \
+                    ${@bb.utils.contains('DISTRO_FEATURES', 'pam', '${nonarch_base_libdir}/security/.debug/pam_systemd.so', '', d)} \
                     ${PYTHON_SITEPACKAGES_DIR}/systemd/.debug \
                    "
 FILES_${PN}-dev = ""
@@ -337,11 +406,12 @@ FILES_libpam-systemd = "${base_libdir}/security/pam_systemd.so \
 FILES_udev = "${base_bindir}/udevadm \
               ${base_bindir}/systemd-hwdb \
               ${base_sbindir}/udevadm \
-              ${systemd_system_unitdir}/sockets.target.wants/systemd-udevd-*.socket \
+              ${base_sbindir}/udevd \
+              ${systemd_system_unitdir}/sockets.target.wants/systemd-udevd-control.socket \
+              ${systemd_system_unitdir}/sockets.target.wants/systemd-udevd-kernel.socket \
+              ${systemd_system_unitdir}/sysinit.target.wants/systemd-hwdb-update.service \
               ${systemd_system_unitdir}/sysinit.target.wants/systemd-udev-trigger.service \
               ${systemd_system_unitdir}/sysinit.target.wants/systemd-udevd.service \
-              ${systemd_system_unitdir}/sysinit.target.wants/udev-finish.service \
-              ${systemd_system_unitdir}/sysinit.target.wants/systemd-hwdb-update.service \
               ${systemd_system_unitdir}/systemd-hwdb-update.service \
               ${systemd_system_unitdir}/systemd-udev-settle.service \
               ${systemd_system_unitdir}/systemd-udev-trigger.service \
@@ -349,35 +419,65 @@ FILES_udev = "${base_bindir}/udevadm \
               ${systemd_system_unitdir}/systemd-udevd-kernel.socket \
               ${systemd_system_unitdir}/systemd-udevd.service \
               ${systemd_system_unitdir}/udev.service \
-              ${base_libdir}/systemd/network/99-default.link \
-              ${base_libdir}/systemd/systemd-udevd \
-              ${base_libdir}/udev/ata_id \
-              ${base_libdir}/udev/cdrom_id \
-              ${base_libdir}/udev/collect \
-              ${base_libdir}/udev/hwdb.d \
-              ${base_libdir}/udev/mtd_probe \
-              ${base_libdir}/udev/rules.d/50-* \
-              ${base_libdir}/udev/rules.d/60-* \
-              ${base_libdir}/udev/rules.d/64-btrfs.rules \
-              ${base_libdir}/udev/rules.d/70-debian-uaccess.rules \
-              ${base_libdir}/udev/rules.d/70-mouse.rules \
-              ${base_libdir}/udev/rules.d/70-power-switch.rules \
-              ${base_libdir}/udev/rules.d/73-special-net-names.rules \
-              ${base_libdir}/udev/rules.d/73-usb-net-by-mac.rules \
-              ${base_libdir}/udev/rules.d/75-* \
-              ${base_libdir}/udev/rules.d/78-sound-card.rules \
-              ${base_libdir}/udev/rules.d/80-* \
-              ${base_libdir}/udev/scsi_id \
-              ${base_libdir}/udev/v4l_id \
-              ${sysconfdir}/init.d \
-              ${sysconfdir}/init/udev* \
+              ${nonarch_base_libdir}/systemd/systemd-udevd \
+              ${nonarch_base_libdir}/udev/ata_id \
+              ${nonarch_base_libdir}/udev/cdrom_id \
+              ${nonarch_base_libdir}/udev/collect \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-OUI.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-acpi-vendor.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-bluetooth-vendor-product.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-net-ifname.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-pci-classes.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-pci-vendor-model.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-sdio-classes.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-sdio-vendor-model.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-usb-classes.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/20-usb-vendor-model.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/60-evdev.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/60-keyboard.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/70-mouse.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/70-pointingstick.hwdb \
+              ${nonarch_base_libdir}/udev/hwdb.d/70-touchpad.hwdb \
+              ${nonarch_base_libdir}/udev/mtd_probe \
+              ${nonarch_base_libdir}/udev/rules.d/50-firmware.rules \
+              ${nonarch_base_libdir}/udev/rules.d/50-udev-default.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-block.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-cdrom_id.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-drm.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-evdev.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-persistent-alsa.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-persistent-input.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-persistent-storage-tape.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-persistent-storage.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-persistent-v4l.rules \
+              ${nonarch_base_libdir}/udev/rules.d/60-serial.rules \
+              ${nonarch_base_libdir}/udev/rules.d/64-btrfs.rules \
+              ${nonarch_base_libdir}/udev/rules.d/70-debian-uaccess.rules \
+              ${nonarch_base_libdir}/udev/rules.d/70-mouse.rules \
+              ${nonarch_base_libdir}/udev/rules.d/70-power-switch.rules \
+              ${nonarch_base_libdir}/udev/rules.d/70-touchpad.rules \
+              ${nonarch_base_libdir}/udev/rules.d/73-special-net-names.rules \
+              ${nonarch_base_libdir}/udev/rules.d/73-usb-net-by-mac.rules \
+              ${nonarch_base_libdir}/udev/rules.d/75-net-description.rules \
+              ${nonarch_base_libdir}/udev/rules.d/75-probe_mtd.rules \
+              ${nonarch_base_libdir}/udev/rules.d/78-sound-card.rules \
+              ${nonarch_base_libdir}/udev/rules.d/80-debian-compat.rules \
+              ${nonarch_base_libdir}/udev/rules.d/80-drivers.rules \
+              ${nonarch_base_libdir}/udev/rules.d/80-net-setup-link.rules \
+              ${nonarch_base_libdir}/udev/scsi_id \
+              ${nonarch_base_libdir}/udev/v4l_id \
               ${sysconfdir}/udev/udev.conf \
-              ${sysconfdir}/udev/rules.d \
-              ${sysconfdir}/udev/hwdb.d \
-              ${base_libdir}/modprobe.d/fbdev-blacklist.conf \
-              ${datadir}/pkgconfig/udev.pc \
+              ${sysconfdir}/init.d/udev \
+              ${sysconfdir}/init/udev.conf \
+              ${sysconfdir}/init/udevmonitor.conf \
+              ${sysconfdir}/init/udevtrigger.conf \
               ${datadir}/bash-completion/completions/udevadm \
-              ${datadir}/initramfs-tools \
+              ${datadir}/bug/udev/control \
+              ${datadir}/bug/udev/script \
+              ${datadir}/initramfs-tools/hooks/udev \
+              ${datadir}/initramfs-tools/scripts/init-bottom/udev \
+              ${datadir}/initramfs-tools/scripts/init-top/udev \
+              ${datadir}/pkgconfig/udev.pc \
               ${datadir}/zsh/vendor-completions/_udevadm \
              "
 
@@ -405,7 +505,7 @@ RPROVIDES_systemd-coredump += "core-dump-handler"
 RPROVIDES_libsystemd += "libsystemd0"
 
 # init script requires init-functions, procps's ps, and mountpoint
-RDEPENDS_udev += "lsb-base procps sysvinit-mountpoint"
+RDEPENDS_udev += "acl kmod util-linux lsb-base procps sysvinit-mountpoint libudev"
 
 inherit update-alternatives
 
@@ -449,7 +549,7 @@ pkg_postinst_systemd-coredump() {
 	if [ -d $D/run/systemd/system ]; then
 		systemctl daemon-reload && systemctl start systemd-coredump.socket || true
 	fi
-	$D${base_libdir}/systemd/systemd-sysctl $D${libdir}/sysctl.d/50-coredump.conf || true
+	$D${nonarch_base_libdir}/systemd/systemd-sysctl $D${nonarch_libdir}/sysctl.d/50-coredump.conf || true
 }
 USERADD_PARAM_systemd-coredump += "--system --no-create-home --home /run/systemd systemd-coredump"
 
