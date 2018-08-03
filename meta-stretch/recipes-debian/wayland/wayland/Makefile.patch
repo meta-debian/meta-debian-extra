@@ -1,0 +1,17 @@
+diff --git a/Makefile.am b/Makefile.am
+index 3eb6fd5..ad5fce3 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -106,10 +106,10 @@ protocol/%-client-protocol.h : $(top_srcdir)/protocol/%.xml
+ 	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) client-header < $< > $@
+ 
+ protocol/%-server-protocol-core.h : $(top_srcdir)/protocol/%.xml
+-	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) server-header -c < $< > $@
++	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) server-header  < $< > $@
+ 
+ protocol/%-client-protocol-core.h : $(top_srcdir)/protocol/%.xml
+-	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) client-header -c < $< > $@
++	$(AM_V_GEN)$(MKDIR_P) $(dir $@) && $(wayland_scanner) client-header  < $< > $@
+ 
+ BUILT_SOURCES =					\
+ 	$(nodist_libwayland_server_la_SOURCES)	\
