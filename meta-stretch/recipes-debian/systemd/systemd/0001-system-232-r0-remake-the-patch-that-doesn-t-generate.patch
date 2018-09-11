@@ -1,0 +1,27 @@
+From 7dbbea2d9be94f3010e9e9d64d49700099f66b24 Mon Sep 17 00:00:00 2001
+From: Yoshiteru KAGEYAMA <yoshiteru.kageyama@toshiba.co.jp>
+Date: Fri, 24 Aug 2018 01:57:17 +0000
+Subject: [PATCH 1/2] system-232-r0: remake the patch that doesn't generate any
+ man files.
+
+Signed-off-by: Yoshiteru KAGEYAMA <yoshiteru.kageyama@toshiba.co.jp>
+---
+ Makefile.am | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Makefile.am b/Makefile.am
+index f7652c2..84f24b5 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -700,7 +700,7 @@ docs/html/man:
+ man/index.html: man/systemd.index.html
+ 	$(AM_V_LN)$(LN_S) -f systemd.index.html $@
+ 
+-if HAVE_PYTHON
++if ENABLE_MANPAGES
+ noinst_DATA += \
+ 	man/index.html
+ endif
+-- 
+2.11.0
+

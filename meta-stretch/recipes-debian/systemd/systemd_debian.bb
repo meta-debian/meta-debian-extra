@@ -6,8 +6,11 @@ SUMMARY = "A System and service manager"
 HOMEPAGE = "http://www.freedesktop.org/wiki/Software/systemd"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
+SRC_URI += "file://0001-system-232-r0-remake-the-patch-that-doesn-t-generate.patch"
+
 PV = "232"
-PROVIDES += "udev"
+PROVIDES += "udev libudev libudev-dev"
+DEPENDS_libudev-dev += "libudev"
 
 # Override value of DEBIAN_GIT_BRANCH variable in debian-package class
 DEBIAN_GIT_BRANCH = "stretch-master"
@@ -18,10 +21,6 @@ file://LICENSE.GPL2;md5=751419260aa954499f7abaabaa882bbe \
 file://LICENSE.LGPL2.1;md5=4fbd65380cdd255951079008b364516c \
 "
 inherit debian-package
-
-SRC_URI += "file://disable-manpages.patch \
-"
-
 
 inherit pkgconfig autotools useradd python3native
 
@@ -97,6 +96,10 @@ do_install_append() {
 	echo "do_install_append is called."
 	# systemd package: setup base_bindir
 	ln -s ${nonarch_base_libdir}/systemd/systemd ${D}${base_bindir}
+
+	# create machine-id
+	touch ${D}${sysconfdir}/machine-id
+
 	# systemd package: setup sysconfdir
 	ln -s ../modules ${D}${sysconfdir}/modules-load.d/modules.conf
 	ln -s ../sysctl.conf ${D}${sysconfdir}/sysctl.d/99-sysctl.conf
@@ -250,7 +253,7 @@ do_install_append() {
 	      ${D}${systemd_system_unitdir}/*/*sysusers*.service
 
 	# remove unnecessary la files. 
-	for i in libnss_resolve libnss_myhostname libnss_mymachines libnss_systemd; do
+	for i in libudev libnss_resolve libnss_myhostname libnss_mymachines libnss_systemd; do
 		rm -f ${D}${base_libdir}/${i}.la
 	done
 	rm -fr ${D}${nonarch_base_libdir}/modprobe.d ${D}${base_libdir}/modprobe.d
@@ -333,6 +336,7 @@ FILES_${PN} = "${base_bindir} \
                ${sysconfdir}/sysctl.d/99-sysctl.conf \
                ${sysconfdir}/systemd/*.conf \
                ${sysconfdir}/xdg/systemd/user \
+               ${sysconfdir}/machine-id \
                ${nonarch_libdir}/tmpfiles.d \
                ${nonarch_libdir}/tmpfiles.d/*.conf \
                ${sysconfdir}/dhcp/dhclient-exit-hooks.d/timesyncd \
@@ -350,9 +354,9 @@ FILES_${PN} = "${base_bindir} \
                ${systemd_system_unitdir}/systemd-resolved.service.d/resolvconf.conf \
                ${systemd_system_unitdir}/timers.target.wants/*.timer \
                ${nonarch_base_libdir}/lsb/init-functions.d/40-systemd \
+               ${nonarch_base_libdir}/systemd/* \
                ${nonarch_base_libdir}/systemd/resolv.conf \
                ${nonarch_base_libdir}/systemd/libsystemd-shared-${PV}.so \
-               ${nonarch_base_libdir}/systemd/* \
                ${nonarch_base_libdir}/udev/rules.d/70-uaccess.rules \
                ${nonarch_base_libdir}/udev/rules.d/71-seat.rules \
                ${nonarch_base_libdir}/udev/rules.d/73-seat-late.rules \
@@ -484,8 +488,7 @@ FILES_udev = "${base_bindir}/udevadm \
 FILES_libudev = "${base_libdir}/libudev${SOLIBS}"
 FILES_libudev-dev = "${includedir}/libudev.h \
                      ${base_libdir}/libudev.so \
-                     ${base_libdir}/libudev.la \
-                     ${base_libdir}/pkgconfig/libudev.pc \
+                     ${libdir}/pkgconfig/libudev.pc \
                      ${base_libdir}/udev/test-udev \
                     "
 FILES_systemd-sysv = " ${base_sbindir}/init \
