@@ -24,7 +24,7 @@ inherit autotools pkgconfig pythonnative gettext distro_features_check
 
 REQUIRED_DISTRO_FEATURES = "opengl"
 
-PACKAGECONFIG ??= "dri dri3 egl gallium r600 gles xa \
+PACKAGECONFIG ??= "dri egl gallium r600 gles xa \
                 ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11 xvmc vdpau', '', d)} \
                 ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland', '', d)} \
                 "
@@ -192,3 +192,5 @@ DEBIAN_NOAUTONAME_libgles2-mesa = "1"
 DEBIAN_NOAUTONAME_libgles2-mesa-dev = "1"
 DEBIAN_NOAUTONAME_libglapi-mesa = "1"
 RPROVIDES_${PN}-dev = "mesa-common-dev"
+
+BBCLASSEXTEND = "native"
