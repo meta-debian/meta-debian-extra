@@ -8,7 +8,7 @@ HOMEPAGE = "https://download.gnome.org/sources/libgudev/"
 DEBIAN_GIT_BRANCH = "stretch-master"
 DEBIAN_QUILT_PATCHES = ""
 
-LICENSE = "LGPL-2"
+LICENSE = "LGPLv2.1"
 inherit debian-package
 inherit autotools pkgconfig
 
