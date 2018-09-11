@@ -28,3 +28,4 @@ DEPENDS_${PN}-dev += "libudev-dev ${PN}"
 DEBIAN_QUILT_PATCHES = ""
 
 DEBIANNAME_${PN} = "${PN}10"
+BBCLASSEXTEND = "native"
