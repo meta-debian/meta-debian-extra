@@ -36,3 +36,4 @@ FILES_${PN}-common = "/lib/udev/rules.d/65-libwacom.rules \
 	${datadir}/${PN}/${PN}.stylus \
 "
 DEBIANNAME_${PN} = "${PN}2"
+BBCLASSEXTEND = "native"
