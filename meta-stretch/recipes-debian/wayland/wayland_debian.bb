@@ -39,8 +39,8 @@ do_install_append() {
 	rm ${D}${libdir}/*.la
 	rm ${D}${libdir}/*.a
 }
-PACKAGES += "lib${DPN}-dev lib${DPN}-bin lib${DPN}-client lib${DPN}-cursor lib${DPN}-server lib${DPN}-dbg"
-PROVIDES += "lib${DPN}-dev lib${DPN}-bin lib${DPN}-client lib${DPN}-cursor lib${DPN}-server lib${DPN}-dbg"
+PACKAGES = "lib${DPN}-dev lib${DPN}-bin lib${DPN}-client lib${DPN}-cursor lib${DPN}-server lib${DPN}-dbg"
+PROVIDES = "lib${DPN}-dev lib${DPN}-bin lib${DPN}-client lib${DPN}-cursor lib${DPN}-server lib${DPN}-dbg"
 
 FILES_lib${DPN}-cursor = "${libdir}/libwayland-cursor.so.*"
 FILES_lib${DPN}-server = "${libdir}/libwayland-server.so.*"
@@ -52,7 +52,7 @@ FILES_lib${DPN}-bin = "${bindir}/wayland-scanner \
 FILES_lib${DPN}-dbg = "${libdir}/.debug/* \
                        ${bindir}/.debug/wayland-scanner \
                       "
-FILES_${PN}-dev += "${datadir}/wayland \
+FILES_lib${DPN}-dev = "${datadir}/wayland \
                     ${includedir}/*.h \
                     ${libdir}/*.a \
                     ${libdir}/*.so \
@@ -63,7 +63,7 @@ FILES_${PN}-dev += "${datadir}/wayland \
 DEBIANNAME_lib${DPN}-cursor = "lib${DPN}-cursor0"
 DEBIANNAME_lib${DPN}-server = "lib${DPN}-server0"
 DEBIANNAME_lib${DPN}-client = "lib${DPN}-client0"
-PKG_${PN}-dev = "lib${DPN}-dev"
+DEBIANNAME_lib${DPN}-dev    = "lib${DPN}-dev"
 
 RDEPENDS_lib${DPN}-server += "libffi"
 RDEPENDS_lib${DPN}-cursor += "lib${DPN}-client"
