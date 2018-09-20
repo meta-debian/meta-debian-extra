@@ -24,6 +24,5 @@ DEPENDS += "wayland"
 
 # There is no debian patch
 DEBIAN_PATCH_TYPE = "nopatch"
-"
 
 BBCLASSEXTEND = "native"
