@@ -31,3 +31,5 @@ PACKAGES =+ "libharfbuzz-bin libharfbuzz-icu libharfbuzz-gobject"
 FILES_libharfbuzz-bin = "${bindir}/*"
 FILES_libharfbuzz-icu = "${libdir}/libharfbuzz-icu${SOLIBS}"
 FILES_libharfbuzz-gobject = "${libdir}/libharfbuzz-gobject${SOLIBS}"
+
+BBCLASSEXTEND = "native"
