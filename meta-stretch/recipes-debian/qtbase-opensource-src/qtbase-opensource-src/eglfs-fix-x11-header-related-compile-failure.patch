@@ -1,0 +1,20 @@
+Subject: [PATCH] eglfs: fix x11 header related compile failure
+
+Add egl config and QT_EGL_NO_X11 define (as all other eglfs project files do).
+
+diff --git a/src/plugins/platforms/eglfs/eglfs-plugin.pro b/src/plugins/platforms/eglfs/eglfs-plugin.pro
+index a628cdc..6a2bbad 100644
+--- a/src/plugins/platforms/eglfs/eglfs-plugin.pro
++++ b/src/plugins/platforms/eglfs/eglfs-plugin.pro
+index a628cdc..6a2bbad 100644
+@@ -2,6 +2,10 @@ TARGET = qeglfs
+ 
+ QT += platformsupport-private eglfs_device_lib-private
+ 
++CONFIG += egl
++# Avoid X11 header collision, use generic EGL native types
++DEFINES += QT_EGL_NO_X11
++
+ SOURCES += $$PWD/qeglfsmain.cpp
+ 
+ OTHER_FILES += $$PWD/eglfs.json

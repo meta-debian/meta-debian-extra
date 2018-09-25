@@ -28,4 +28,5 @@ SRC_URI += "\
     file://0004-qt_module-Fix-pkgconfig-and-libtool-replacements.patch \
     file://0005-configure-bump-path-length-from-256-to-512-character.patch \
     file://0006-QOpenGLPaintDevice-sub-area-support.patch \
+    file://eglfs-fix-x11-header-related-compile-failure.patch \
 "
