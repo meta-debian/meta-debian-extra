@@ -17,7 +17,7 @@ DEPENDS_${PN}-dev += "${PN} glib-2.0"
 
 PR = "r0"
 PV = "0.22"
-LIC_FILES_CHKSUM = "file://COPYING;md5=40a21fffb367c82f39fd91a3b137c36e4"
+LIC_FILES_CHKSUM = "file://COPYING;md5=40a21fffb367c82f39fd91a3b137c36e"
 
 do_install_append() {
 	rm -f ${D}${libdir}/libwacom.la
