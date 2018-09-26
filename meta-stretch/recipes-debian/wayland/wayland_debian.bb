@@ -21,7 +21,7 @@ PV = "1.12.0"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "\
-	file://COPYING;md5=1d4476a7d98dd5691c53d4d43a510c72"
+	file://COPYING;md5=b31d8f53b6aaf2b4985d7dd7810a70d1"
 inherit autotools pkgconfig
 
 DEPENDS_class-target += "lib${DPN}-dev-native lib${DPN}-bin-native libffi expat libxml2"
