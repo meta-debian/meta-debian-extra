@@ -16,7 +16,7 @@ inherit autotools pkgconfig
 
 PR = "r1"
 PV = "1.6.3"
-LIC_FILES_CHKSUM = "file://COPYING;md5=bb3d4b05b7549e0038fad80ef6940844"
+LIC_FILES_CHKSUM = "file://COPYING;md5=2184aef38ff137ed33ce9a63b9d1eb8f"
 
 PACKAGES += "${PN}-bin"
 
