@@ -10,7 +10,7 @@ inherit debian-package
 PV = "2.2.0"
 
 LICENSE = "MIT"
-LIC_FILES_CHKSUM = "file://COPYING;md5=1b71f681713d1256e1c23b0890920874"
+LIC_FILES_CHKSUM = "file://COPYING;md5=9c3ee559c6f9dcee1043ead112139f4f"
 
 inherit autotools gzipnative
 
