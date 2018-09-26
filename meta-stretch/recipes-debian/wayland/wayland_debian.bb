@@ -52,13 +52,19 @@ FILES_lib${DPN}-bin = "${bindir}/wayland-scanner \
 FILES_lib${DPN}-dbg = "${libdir}/.debug/* \
                        ${bindir}/.debug/wayland-scanner \
                       "
-FILES_lib${DPN}-dev = "${datadir}/wayland \
+FILES_${PN}-dev = "${datadir}/wayland \
                     ${includedir}/*.h \
                     ${libdir}/*.a \
                     ${libdir}/*.so \
                     ${libdir}/pkgconfig/*.pc \
                     ${datadir}/wayland/wayland.* \
                    "
+PKG_${PN}-dev = "lib${DPN}-dev"
+RPROVIDES_${PN}-dev = "lib${DPN}-dev"
+RDEPENDS_${PN}-dev = "lib${DPN}-client \
+                      lib${DPN}-cursor \
+                      lib${DPN}-server \
+"
 
 DEBIANNAME_lib${DPN}-cursor = "lib${DPN}-cursor0"
 DEBIANNAME_lib${DPN}-server = "lib${DPN}-server0"
@@ -69,4 +75,4 @@ RDEPENDS_lib${DPN}-server += "libffi"
 RDEPENDS_lib${DPN}-cursor += "lib${DPN}-client"
 RDEPENDS_lib${DPN}-client += "libffi"
 
-BBCLASSEXTEND = "native"
+BBCLASSEXTEND = "native nativesdk"
