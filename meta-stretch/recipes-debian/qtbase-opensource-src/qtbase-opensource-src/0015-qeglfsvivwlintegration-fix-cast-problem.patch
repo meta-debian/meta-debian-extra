@@ -1,0 +1,35 @@
+From f8d19224965fa88222c92a876b2019d50af474a9 Mon Sep 17 00:00:00 2001
+From: Yoshiteru KAGEYAMA <yoshiteru.kageyama@toshiba.co.jp>
+Date: Tue, 25 Sep 2018 10:32:58 +0000
+Subject: [PATCH 2/2] qeglfsvivwlintegration: fix cast problem.
+
+Signed-off-by: Yoshiteru KAGEYAMA <yoshiteru.kageyama@toshiba.co.jp>
+---
+ .../eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp   | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp b/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp
+index 5c113456..cecb415f 100644
+--- a/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp
++++ b/src/plugins/platforms/eglfs/deviceintegration/eglfs_viv_wl/qeglfsvivwlintegration.cpp
+@@ -60,7 +60,7 @@ void QEglFSVivWaylandIntegration::platformInit()
+     }
+ 
+     mWaylandDisplay = wl_display_create();
+-    mNativeDisplay = fbGetDisplay(mWaylandDisplay);
++    mNativeDisplay = (EGLNativeDisplayType)fbGetDisplay(mWaylandDisplay);
+     fbGetDisplayGeometry(mNativeDisplay, &width, &height);
+     mScreenSize.setHeight(height);
+     mScreenSize.setWidth(width);
+@@ -81,7 +81,7 @@ EGLNativeWindowType QEglFSVivWaylandIntegration::createNativeWindow(QPlatformWin
+     Q_UNUSED(window)
+     Q_UNUSED(format)
+ 
+-    EGLNativeWindowType eglWindow = fbCreateWindow(mNativeDisplay, 0, 0, size.width(), size.height());
++    EGLNativeWindowType eglWindow = (EGLNativeWindowType)fbCreateWindow(mNativeDisplay, 0, 0, size.width(), size.height());
+     return eglWindow;
+ }
+ 
+-- 
+2.11.0
+

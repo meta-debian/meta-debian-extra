@@ -29,4 +29,6 @@ SRC_URI += "\
     file://0005-configure-bump-path-length-from-256-to-512-character.patch \
     file://0006-QOpenGLPaintDevice-sub-area-support.patch \
     file://eglfs-fix-x11-header-related-compile-failure.patch \
+    file://0014-qeglfsvivintegration-fix-cast-problem.patch \
+    file://0015-qeglfsvivwlintegration-fix-cast-problem.patch \
 "
