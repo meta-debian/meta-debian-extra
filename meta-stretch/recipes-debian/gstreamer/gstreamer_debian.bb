@@ -74,7 +74,7 @@ FILES_lib${PN}-dev += "\
 	${datadir}/aclocal/* \
 	${includedir}/* \
 	${libdir}/*${SOLIBSDEV} \
-	${libdir}/pkgconfig"
+	${libdir}/pkgconfig/*"
 
 PKG_${PN} = "gstreamer1.0-tools"
 PKG_lib${PN} = "libgstreamer1.0-0"
