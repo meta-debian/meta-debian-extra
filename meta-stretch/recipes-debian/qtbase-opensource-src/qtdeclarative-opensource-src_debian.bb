@@ -107,3 +107,6 @@ RDEPENDS_qtdeclarative5-examples += "\
     qml-module-qtquick-xmllistmodel \
     qml-module-qttest \
 "
+RDEPENDS_${PN}-dev = "\
+	libqt5qml5 libqt5quick5 libqt5quickparticles5 \
+	libqt5quicktest5 libqt5quickwidgets5 qt5-qmltooling-plugins qtbase5-dev"
