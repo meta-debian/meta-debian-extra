@@ -52,14 +52,13 @@ FILES_lib${DPN}-bin = "${bindir}/wayland-scanner \
 FILES_lib${DPN}-dbg = "${libdir}/.debug/* \
                        ${bindir}/.debug/wayland-scanner \
                       "
-FILES_${PN}-dev = "${datadir}/wayland \
+FILES_lib${DPN}-dev = "${datadir}/wayland \
                     ${includedir}/*.h \
                     ${libdir}/*.a \
                     ${libdir}/*.so \
                     ${libdir}/pkgconfig/*.pc \
                     ${datadir}/wayland/wayland.* \
                    "
-PKG_${PN}-dev = "lib${DPN}-dev"
 RPROVIDES_${PN}-dev = "lib${DPN}-dev"
 RDEPENDS_${PN}-dev = "lib${DPN}-client \
                       lib${DPN}-cursor \
