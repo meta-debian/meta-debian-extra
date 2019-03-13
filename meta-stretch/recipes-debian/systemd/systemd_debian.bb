@@ -6,7 +6,9 @@ SUMMARY = "A System and service manager"
 HOMEPAGE = "http://www.freedesktop.org/wiki/Software/systemd"
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 
-SRC_URI += "file://0001-system-232-r0-remake-the-patch-that-doesn-t-generate.patch"
+SRC_URI_append = " \
+file://0001-system-232-r0-remake-the-patch-that-doesn-t-generate.patch\
+"
 
 PV = "232"
 PROVIDES += "udev libudev libudev-dev"
@@ -150,7 +152,12 @@ do_install_append() {
 	ln -s systemd-modules-load.service ${D}${systemd_system_unitdir}/kmod.service
 	ln -s systemd-modules-load.service \
 		${D}${systemd_system_unitdir}/module-init-tools.service
-	install -d ${D}${systemd_system_unitdir}/networking.service.d
+	# systemd-networkd
+	install -d ${D}${systemd_unitdir}/network
+	install -m 644 ${S}/network/80-container-host0.network ${D}${systemd_unitdir}/network/80-container-host0.network
+	install -m 644 ${S}/network/80-container-ve.network ${D}${systemd_unitdir}/network/80-container-ve.network
+	install -m 644 ${S}/network/80-container-vz.network ${D}${systemd_unitdir}/network/80-container-vz.network
+
 	ln -s systemd-sysctl.service ${D}${systemd_system_unitdir}/procps.service
 	ln -s rc-local.service ${D}${systemd_system_unitdir}/rc.local.service
 	ln -s systemd-random-seed.service ${D}${systemd_system_unitdir}/urandom.service
@@ -234,10 +241,10 @@ do_install_append() {
 	rm -rf ${D}${nonarch_base_sbindir}/udevd \
 	       ${D}${sysconfdir}/X11 \
 	       ${D}${nonarch_libdir}/sysctl.d/50-default.conf \
-	       ${D}${nonarch_base_libdir}/systemd/libsystemd-shared.so \
 	       ${D}${datadir}/factory/ \
 	       ${D}${datadir}/bash-completion/completions/kernel-install \
-	       ${D}${systemd_system_unitdir}/halt-local.service
+	       ${D}${systemd_system_unitdir}/halt-local.service 
+
 	find ${D}/ -name '*.busname' -delete
 	# remove files related to factory-reset feature
 	find ${D}/ \( -name 'systemd-update-done*' -o \
@@ -253,10 +260,12 @@ do_install_append() {
 	      ${D}${systemd_system_unitdir}/*/*sysusers*.service
 
 	# remove unnecessary la files. 
-	for i in libudev libnss_resolve libnss_myhostname libnss_mymachines libnss_systemd; do
+	for i in libsystemd libudev libnss_resolve libnss_myhostname libnss_mymachines libnss_systemd; do
 		rm -f ${D}${base_libdir}/${i}.la
 	done
 	rm -fr ${D}${nonarch_base_libdir}/modprobe.d ${D}${base_libdir}/modprobe.d
+	rm -f ${D}${nonarch_base_libdir}/systemd/libsystemd-shared.*
+	rm -f ${D}${nonarch_base_libdir}/systemd/network/99-default.link
 }
 
 
@@ -264,8 +273,8 @@ PACKAGES =+ "libnss-myhostname \
              libnss-mymachines \
              libnss-resolve \
              libnss-systemd \
-             libsystemd-dev \
              libsystemd \
+             libsystemd-dev \
              ${@bb.utils.contains('DISTRO_FEATURES', 'pam', 'libpam-systemd', '', d)} \
              udev \
              libudev-dev \
@@ -274,6 +283,7 @@ PACKAGES =+ "libnss-myhostname \
              systemd-journal-remote \
              systemd-container \
              systemd-sysv \
+             systemd-networkd \
             "
 FILES_libnss-myhostname = "${base_libdir}/libnss_myhostname${SOLIBS}"
 FILES_libnss-mymachines = "${base_libdir}/libnss_mymachines${SOLIBS}"
@@ -354,13 +364,14 @@ FILES_${PN} = "${base_bindir} \
                ${systemd_system_unitdir}/systemd-resolved.service.d/resolvconf.conf \
                ${systemd_system_unitdir}/timers.target.wants/*.timer \
                ${nonarch_base_libdir}/lsb/init-functions.d/40-systemd \
-               ${nonarch_base_libdir}/systemd/* \
-               ${nonarch_base_libdir}/systemd/resolv.conf \
                ${nonarch_base_libdir}/systemd/libsystemd-shared-${PV}.so \
+               ${nonarch_base_libdir}/systemd/resolv.conf \
                ${nonarch_base_libdir}/udev/rules.d/70-uaccess.rules \
                ${nonarch_base_libdir}/udev/rules.d/71-seat.rules \
                ${nonarch_base_libdir}/udev/rules.d/73-seat-late.rules \
                ${nonarch_base_libdir}/udev/rules.d/99-systemd.rules \
+               ${nonarch_base_libdir}/systemd/systemd \
+               ${nonarch_base_libdir}/systemd/systemd-* \
                ${nonarch_base_libdir}/systemd/system-generators \
                ${nonarch_base_libdir}/systemd/system-generators/*generator \
                ${nonarch_libdir}/systemd/system-preset/* \
@@ -369,6 +380,7 @@ FILES_${PN} = "${base_bindir} \
                ${nonarch_libdir}/systemd/user/*.service \
                ${nonarch_libdir}/tmpfiles.d/*.conf \
                ${nonarch_libdir}/systemd/boot/efi/* \
+               ${nonarch_base_libdir}/systemd/system-preset/90-systemd.preset \
                ${datadir}/bug/systemd/* \
                ${datadir}/dbus-1/services/* \
                ${datadir}/dbus-1/system-services/* \
@@ -397,12 +409,10 @@ FILES_${PN}-dev = ""
 ALLOW_EMPTY_${PN}-dev = "1"
 
 FILES_libsystemd = "${base_libdir}/libsystemd${SOLIBS}"
-FILES_libsystemd-dev = "${base_libdir}/libsystemd.so \
-                        ${base_libdir}/libsystemd.la \
-                        ${base_libdir}/pkgconfig/libsystemd.pc \
-                        ${includedir}/systemd \
+FILES_libsystemd-dev = "${base_libdir}/libsystemd${SOLIBSDEV} \
+                        ${libdir}/pkgconfig/libsystemd.pc \
+                        ${includedir}/systemd/*.h \
                        "
-
 FILES_libpam-systemd = "${base_libdir}/security/pam_systemd.so \
                         ${datadir}/pam-configs/systemd \
                        "
@@ -491,6 +501,11 @@ FILES_libudev-dev = "${includedir}/libudev.h \
                      ${libdir}/pkgconfig/libudev.pc \
                      ${base_libdir}/udev/test-udev \
                     "
+FILES_systemd-networkd = "${systemd_unitdir}/systemd-networkd \
+                          ${systemd_unitdir}/systemd-networkd-wait-online \
+                          ${systemd_unitdir}/network/*.network \
+                         "
+
 FILES_systemd-sysv = " ${base_sbindir}/init \
                        ${base_sbindir}/halt \
                        ${base_sbindir}/poweroff \
@@ -499,13 +514,14 @@ FILES_systemd-sysv = " ${base_sbindir}/init \
                        ${base_sbindir}/shutdown \
                        ${base_sbindir}/telinit \
                      "
-RDEPENDS_${PN} += "systemd-sysv"
+
+
+RDEPENDS_${PN} += "systemd-sysv systemd-networkd"
 RDEPENDS_libnss-resolve += "${PN}"
 RDEPENDS_libpam-systemd += "${PN} libpam-runtime dbus systemd-sysv"
 RDEPENDS_systemd-journal-remote += "adduser"
 RDEPENDS_systemd-coredump += "adduser"
 RPROVIDES_systemd-coredump += "core-dump-handler"
-RPROVIDES_libsystemd += "libsystemd0"
 
 # init script requires init-functions, procps's ps, and mountpoint
 RDEPENDS_udev += "acl kmod util-linux lsb-base procps sysvinit-mountpoint libudev"
@@ -541,6 +557,9 @@ ALTERNATIVE_PRIORITY[runlevel] ?= "300"
 DEBIAN_NOAUTONAME_libnss-myhostname = "1"
 DEBIAN_NOAUTONAME_libnss-mymachines = "1"
 DEBIAN_NOAUTONAME_libnss-resolve = "1"
+
+DEBIANNAME_libsystemd = "libsystemd0"
+DEBIANNAME_libsystemd-dev = "libsystemd-dev"
 
 USERADD_PACKAGES = "${PN}"
 USERADD_PARAM_${PN} +=  "--system --no-create-home --home /run/systemd --shell /bin/false --user-group systemd-timesync; --system --no-create-home --home /run/systemd/netif --shell /bin/false --user-group systemd-network; --system --no-create-home --home /run/systemd/resolve --shell /bin/false --user-group systemd-resolve; --system --no-create-home --home /run/systemd --shell /bin/false --user-group systemd-bus-proxy"
