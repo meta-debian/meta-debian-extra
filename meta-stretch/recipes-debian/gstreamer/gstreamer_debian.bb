@@ -52,6 +52,9 @@ do_install_append() {
 	       ${D}${libdir}/*.la \
 	       ${D}${libdir}/gstreamer*/*.la \
 	       ${D}${bindir}/gst-stats-*
+	rm -rf ${D}${datadir}/doc \
+               ${D}${datadir}/gir-1.0 \
+               ${D}${datadir}/man 
 
 	${CC} -o ${D}${bindir}/gst-codec-info-1.0 ${S}/debian/gst-codec-info.c \
 	         ${CFLAGS} ${CPPFLAGS} ${LDFLAGS} `${STAGING_BINDIR_NATIVE}/pkg-config \
@@ -63,18 +66,33 @@ do_install_append() {
 RRECOMMENDS_${PN}_qemux86    += "kernel-module-snd-ens1370 kernel-module-snd-rawmidi"
 RRECOMMENDS_${PN}_qemux86-64 += "kernel-module-snd-ens1370 kernel-module-snd-rawmidi"
 
-PACKAGES =+ "lib${PN} lib${PN}-dev"
+PACKAGES = "${PN} lib${PN} lib${PN}-dev"
 
+FILES_${PN} += "\
+	${bindir}/gst-inspect-1.0 \
+	${bindir}/gst-launch-1.0 \
+	${bindir}/gst-typefind-1.0 \
+	"
 FILES_lib${PN} += "\
-	${libdir}/gstreamer*/* \
-	${libdir}/*${SOLIBS}"
+	${libdir}/gstreamer1.0/gstreamer-1.0/* \
+	${libdir}/gstreamer-1.0/*.so \
+	${libdir}/*.${SOLIBS} \
+	${datadir}/locale/*/LC_MESSAGES/gstreamer-1.0.mo \
+	"
 FILES_lib${PN}-dev += "\
 	${bindir}/dh_gstscancodecs \
 	${bindir}/gst-codec-info-* \
 	${datadir}/aclocal/* \
-	${includedir}/* \
+	${includedir}/gstreamer-1.0/gst/*.h \
+	${includedir}/gstreamer-1.0/gst/base/*.h \
+	${includedir}/gstreamer-1.0/gst/check/*.h \
+	${includedir}/gstreamer-1.0/gst/controller/*.h \
+	${includedir}/gstreamer-1.0/gst/net/*.h \
 	${libdir}/*${SOLIBSDEV} \
-	${libdir}/pkgconfig/*"
+	${libdir}/pkgconfig/*.pc"
+
+INHIBIT_PACKAGE_STRIP = "1"
+INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
 
 PKG_${PN} = "gstreamer1.0-tools"
 PKG_lib${PN} = "libgstreamer1.0-0"
