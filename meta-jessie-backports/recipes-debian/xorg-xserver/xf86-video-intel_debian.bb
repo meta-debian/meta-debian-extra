@@ -79,6 +79,9 @@ PKG_${PN} = "${DPN}"
 PKG_${PN}-dev = "${DPN}-dev"
 PKG_${PN}-dbg = "${DPN}-dbg"
 
-RDEPENDS_${PN} += "xserver-xorg-core xserver-xorg-extension-glx"
+RDEPENDS_${PN} += " \
+xserver-xorg-core \
+${@bb.utils.contains('DISTRO_FEATURES', 'opengl', 'xserver-xorg-extension-glx', '', d)} \
+"
 RPROVIDES_${PN} += "${DPN}"
 RPROVIDES_${PN}-dev += "${DPN}-dev"
