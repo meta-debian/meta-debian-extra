@@ -28,17 +28,28 @@ DEPENDS_class-target += "lib${DPN}-dev-native lib${DPN}-bin-native libffi expat 
 DEPENDS_class-native += "libffi-native expat-native libxml2-native"
 
 #building documentation depend on doxygen which is not yet in meta-debian
-EXTRA_OECONF += "--disable-documentation"
+EXTRA_OECONF = "--disable-documentation"
 EXTRA_OEMAKE_class-target += "wayland_scanner=${STAGING_BINDIR_NATIVE}/wayland-scanner"
 DEBIAN_PATCH_TYPE = "nopatch"
 
 # Avoid a parallel build problem
 PARALLEL_MAKE = ""
-do_install_append() {
+do_install_append_class-target() {
 	#remove the unwanted files
 	rm ${D}${libdir}/*.la
 	rm ${D}${libdir}/*.a
 }
+do_install_append_class-native() {
+	sed -e 's,PKG_CHECK_MODULES(.*),,g' \
+	    -e 's,$PKG_CONFIG,pkg-config-native,g' \
+	    -i ${D}/${datadir}/aclocal/wayland-scanner.m4
+}
+
+sysroot_stage_all_append_class-target() {
+	rm ${SYSROOT_DESTDIR}/${datadir}/aclocal/wayland-scanner.m4
+	cp ${STAGING_DATADIR_NATIVE}/aclocal/wayland-scanner.m4 ${SYSROOT_DESTDIR}/${datadir}/aclocal/
+}
+
 PACKAGES = "lib${DPN}-dev lib${DPN}-bin lib${DPN}-client lib${DPN}-cursor lib${DPN}-server lib${DPN}-dbg"
 PROVIDES = "lib${DPN}-dev lib${DPN}-bin lib${DPN}-client lib${DPN}-cursor lib${DPN}-server lib${DPN}-dbg"
 
