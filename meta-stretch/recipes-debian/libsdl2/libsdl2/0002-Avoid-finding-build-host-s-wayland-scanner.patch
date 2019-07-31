@@ -24,7 +24,7 @@ index 3376600..2aa6ed4 100644
 -                WAYLAND_SCANNER=`$PKG_CONFIG --variable=wayland_scanner wayland-scanner`
 +                AC_PATH_PROG([WAYLAND_SCANNER], [wayland-scanner])
                  WAYLAND_CORE_PROTOCOL_DIR=${WAYLAND_PROTOCOLS_SYSROOT_DIR}`$PKG_CONFIG --variable=pkgdatadir wayland-client`
-                 WAYLAND_PROTOCOLS_DIR=${WAYLAND_PROTOCOLS_SYSROOT_DIR}`$PKG_CONFIG --variable=pkgdatadir wayland-protocols`
+                 WAYLAND_PROTOCOLS_DIR=`$PKG_CONFIG --variable=pkgdatadir wayland-protocols`
                  video_wayland=yes
 -- 
 2.7.4
