@@ -9,6 +9,9 @@ limited to GPUs or Intel specific hardware, as other hardware and manufacturers 
 can also freely use this API for hardware accelerated video decoding. \
 "
 
+# Use jessie-backports-master branch
+DEBIAN_GIT_BRANCH = "jessie-backports-master"
+
 inherit debian-package
 
 PV = "1.7.3"
@@ -17,8 +20,6 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "\
 file://COPYING;md5=2e48940f94acb0af582e5ef03537800f \
 file://va/x11/va_dri2.h;beginline=2;endline=30;md5=48c678be1248906d94c7496f795983fb"
-
-SRC_URI = "git://salsa.debian.org/multimedia-team/libva;protocol=https;branch=jessie-backports"
 
 DEPENDS = "libdrm libxext libxfixes virtual/mesa"
 
