@@ -1,5 +1,4 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
-SRC_URI += "file://0001-wayland-protocol-locate-the-correct-libraries-with-p.patch"
 
 SUMMARY = "wayland compositor protocols"
 DESCRIPTION = "Wayland protocols that add functionality not available in the Wayland core \
@@ -17,6 +16,8 @@ PV = "1.7"
 
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://COPYING;md5=c7b12b6702da38ca028ace54aae3d484"
+
+SRC_URI += "file://0001-wayland-protocol-locate-the-correct-libraries-with-p.patch"
 
 inherit autotools
 
