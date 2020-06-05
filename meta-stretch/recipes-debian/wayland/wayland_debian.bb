@@ -1,6 +1,7 @@
 FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}:"
 SRC_URI_append = "\
 	file://Makefile.patch \
+	file://fixpathinpcfiles.patch \
 "
 SUMMARY = "wayland compositor infrastructure"
 DESCRIPTION = "\
