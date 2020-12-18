@@ -16,7 +16,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://docs/license.html;md5=899fbe7e42d494c7c8c159c7001693d5"
 DEBIAN_PATCH_TYPE = "quilt"
 
-DEPENDS = "expat flex-native bison-native udev"
+DEPENDS = "expat flex-native bison-native udev libclc"
 
 PROVIDES = "virtual/libgl virtual/libgles1 virtual/libgles2 virtual/egl virtual/mesa"
 
@@ -24,7 +24,7 @@ inherit autotools pkgconfig pythonnative gettext distro_features_check
 
 REQUIRED_DISTRO_FEATURES = "opengl"
 
-PACKAGECONFIG ??= "dri egl gallium r600 gles xa \
+PACKAGECONFIG ??= "dri egl gallium r600 gles xa opencl gallium-llvm \
                 ${@bb.utils.contains('DISTRO_FEATURES', 'x11', 'x11 xvmc vdpau', '', d)} \
                 ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'wayland', '', d)} \
                 "
@@ -65,8 +65,9 @@ VULKAN_DRIVERS_append_arm = ",radeon"
 # keep --with-gallium-drivers separate, because when only one of gallium versions is enabled,
 # other 2 were adding --without-gallium-drivers
 PACKAGECONFIG[gallium]      = "--with-gallium-drivers=${GALLIUM_DRIVERS}, --without-gallium-drivers"
-PACKAGECONFIG[gallium-llvm] = "--enable-gallium-llvm --enable-llvm-shared-libs, \
-                               --disable-gallium-llvm, llvm-toolchain-3.5"
+PACKAGECONFIG[gallium-llvm] = "--enable-gallium-llvm --enable-llvm-shared-libs \
+                               --with-clang-libdir=${STAGING_DIR_HOST}${nonarch_libdir}/llvm-3.8/lib, \
+                               --disable-gallium-llvm, llvm-toolchain-3.8"
 PACKAGECONFIG[opencl] = "--enable-opencl --enable-opencl-icd,--disable-opencl,libclc"
 
 PACKAGECONFIG[xa]  = "--enable-xa, --disable-xa"
@@ -76,6 +77,9 @@ PACKAGECONFIG[vulkan]  = "--with-vulkan-drivers=${VULKAN_DRIVERS},,vulkan"
 
 # llvmpipe is slow if compiled with -fomit-frame-pointer (e.g. -O2)
 FULL_OPTIMIZATION_append = " -fno-omit-frame-pointer"
+
+export LLVM_CONFIG = "${STAGING_BINDIR_NATIVE}/llvm-config-3.8"
+export YOCTO_ALTERNATE_EXE_PATH = "${STAGING_LIBDIR}/llvm-3.8"
 
 EXTRA_OECONF += " \
         --enable-osmesa \
@@ -94,6 +98,7 @@ PACKAGES =+ "libxatracker libxatracker-dev libgbm libgbm-dev libegl-mesa libegl-
              libegl-mesa-drivers libwayland-egl-mesa \
              libgles1-mesa libgles1-mesa-dev libgles2-mesa libgles2-mesa-dev libglapi-mesa \
              libgl-mesa-glx libgl-mesa-dri libgl-mesa-dev libosmesa libosmesa-dev mesa-vdpau-drivers \
+             mesa-opencl-icd \
              "
 
 FILES_libxatracker = "${libdir}/libxatracker${SOLIBS}"
@@ -152,8 +157,19 @@ FILES_libosmesa-dev = " \
 "
 FILES_mesa-vdpau-drivers = "${libdir}/vdpau/*${SOLIBS}"
 
+FILES_mesa-opencl-icd = " \
+    ${sysconfdir}/OpenCL/vendors/mesa.icd \
+    ${libdir}/gallium-pipe/*${SOLIBSDEV} \
+    ${libdir}/libMesaOpenCL${SOLIBS} \
+    ${libdir}/libMesaOpenCL${SOLIBSDEV} \
+"
+
 FILES_${PN}-dbg += "${libdir}/*/.debug"
 FILES_${PN}-dev += "${libdir}/*/*.la ${libdir}/vdpau/*${SOLIBSDEV}"
+
+# we name and ship this package as Debian,
+# so we need pass QA errors with dev-so
+INSANE_SKIP_mesa-opencl-icd += "dev-so"
 
 # Remove the mesa dependency on mesa-dev, as mesa is empty
 RDEPENDS_${PN}-dev = ""
@@ -175,6 +191,7 @@ RDEPENDS_libgl-mesa-glx += "libglapi-mesa"
 RDEPENDS_libgl-mesa-dev += "mesa-common-dev libgl-mesa-glx"
 RDEPENDS_libosmesa += "libglapi-mesa"
 RDEPENDS_libosmesa-dev += "libosmesa mesa-common-dev"
+RDEPENDS_mesa-opencl-icd += "ocl-icd-libopencl1"
 
 DEBIANNAME_${PN}-dev = "mesa-common-dev"
 DEBIANNAME_libegl-mesa = "libegl1-mesa"
@@ -191,6 +208,7 @@ DEBIAN_NOAUTONAME_libgles1-mesa-dev = "1"
 DEBIAN_NOAUTONAME_libgles2-mesa = "1"
 DEBIAN_NOAUTONAME_libgles2-mesa-dev = "1"
 DEBIAN_NOAUTONAME_libglapi-mesa = "1"
+DEBIAN_NOAUTONAME_mesa-opencl-icd = "1"
 
 RPROVIDES_${PN}-dev = "mesa-common-dev"
 RPROVIDES_libegl-mesa = "libegl1-mesa"
