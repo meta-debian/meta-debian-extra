@@ -79,7 +79,7 @@ PACKAGECONFIG[vulkan]  = "--with-vulkan-drivers=${VULKAN_DRIVERS},,vulkan"
 FULL_OPTIMIZATION_append = " -fno-omit-frame-pointer"
 
 export LLVM_CONFIG = "${STAGING_BINDIR_NATIVE}/llvm-config-3.8"
-export YOCTO_ALTERNATE_EXE_PATH = "${STAGING_LIBDIR}/llvm-3.8"
+export YOCTO_ALTERNATE_EXE_PATH = "${STAGING_DIR_HOST}${nonarch_libdir}/llvm-3.8/bin"
 
 EXTRA_OECONF += " \
         --enable-osmesa \
