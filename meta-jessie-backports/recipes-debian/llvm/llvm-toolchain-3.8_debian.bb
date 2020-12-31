@@ -65,8 +65,15 @@ EXTRA_OECMAKE += "-DUSE_SHARED_LLVM=on \
                 -DLIBCLANG_LIBRARY_VERSION=1 \
                 -DCMAKE_CROSSCOMPILING:BOOL=ON \
                 -DLLVM_TARGETS_TO_BUILD="${LLVM_TARGETS}" \
+"
+EXTRA_OECMAKE_append_class-target = "\
                 -DLLVM_TABLEGEN=${STAGING_BINDIR_NATIVE}/llvm-tblgen-${LLVM_VERSION} \
                 -DCLANG_TABLEGEN=${STAGING_BINDIR_NATIVE}/clang-tblgen-${LLVM_VERSION} \
+"
+EXTRA_OECMAKE_append_class-native = "\
+                -DPYTHON_RELEASE_LIB=${STAGING_LIBDIR} \
+                -DLLDB_DISABLE_LIBEDIT=1 \
+                -DDL_LIBRARY_PATH=${libdir}/libdl.so \
 "
 
 export STAGING_INCDIR
@@ -113,22 +120,7 @@ do_configure_prepend(){
 	cd ${B}
 }
 
-# Provide clang-tblgen, llvm-tblgen and llvm-config native commands
-do_compile_class-native() {
-	oe_runmake -C ${B}/NATIVE clang-tblgen llvm-tblgen llvm-config
-}
-do_install_class-native() {
-	install -d ${D}${bindir}
-	install -m 0755 ${B}/NATIVE/bin/clang-tblgen ${D}${bindir}/clang-tblgen-${LLVM_VERSION}
-	install -m 0755 ${B}/NATIVE/bin/llvm-tblgen ${D}${bindir}/llvm-tblgen-${LLVM_VERSION}
-	install -m 0755 ${B}/NATIVE/bin/llvm-config ${D}${bindir}/llvm-config-${LLVM_VERSION}
-}
-
-do_install_append_class-target() {
-	# Base on debian/rules
-	chrpath -d `find ${D}${libdir}/llvm-${LLVM_VERSION}/bin/ -type f -executable -exec file -i '{}' \; | \
-	            grep 'x-executable; charset=binary'|cut -d: -f1`
-
+do_install_append(){
 	# Create this fake directory to make the install libclang-common-dev happy
 	# under the unsupported archs of compiler-rt
 	install -d ${D}${libdir}/clang/${LLVM_VERSION} \
@@ -319,6 +311,19 @@ do_install_append_class-target() {
 
 	# Correct files permission
 	chmod 0644 ${D}${libdir}/llvm-${LLVM_VERSION}/lib/*.a
+}
+
+do_install_append_class-target(){
+	# Base on debian/rules
+	chrpath -d `find ${D}${libdir}/llvm-${LLVM_VERSION}/bin/ -type f -executable -exec file -i '{}' \; | \
+		grep 'x-executable; charset=binary'|cut -d: -f1`
+}
+
+do_install_append_class-native() {
+	install -d ${D}${bindir}
+	install -m 0755 ${B}/NATIVE/bin/clang-tblgen ${D}${bindir}/clang-tblgen-${LLVM_VERSION}
+	install -m 0755 ${B}/NATIVE/bin/llvm-config ${D}${bindir}/llvm-config-${LLVM_VERSION}
+	install -m 0755 ${B}/NATIVE/bin/llvm-tblgen ${D}${bindir}/llvm-tblgen-${LLVM_VERSION}
 }
 
 # we name and ship packages as Debian,
