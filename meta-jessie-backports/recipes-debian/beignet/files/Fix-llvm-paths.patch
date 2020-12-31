@@ -1,0 +1,12 @@
+diff --git a/backend/src/CMakeLists.txt b/backend/src/CMakeLists.txt
+index 7c1f4db..bd15f52 100644
+--- a/backend/src/CMakeLists.txt
++++ b/backend/src/CMakeLists.txt
+@@ -154,6 +154,7 @@ set (GBE_LINK_LIBRARIES
+     ${LLVM_SYSTEM_LIBS}
+     ${CMAKE_THREAD_LIBS_INIT}
+     ${CMAKE_DL_LIBS}
++    -L##LLVM_LIBDIR##
+     )
+ 
+ include_directories (.)
