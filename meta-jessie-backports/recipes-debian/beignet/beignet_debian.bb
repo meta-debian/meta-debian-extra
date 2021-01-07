@@ -54,9 +54,7 @@ do_install_append(){
 	cp -r ${S}/kernels/* ${D}${datadir}/beignet/test_kernels/
 }
 
-PACKAGES =+ "${PN}-opencl-icd"
-
-FILES_${PN}-opencl-icd = "\
+FILES_${PN} = "\
     ${sysconfdir} \
     ${libdir}/beignet/beignet.bc \
     ${libdir}/beignet/beignet.pch \
@@ -72,7 +70,12 @@ FILES_${PN}-dev += "\
     ${libdir}/beignet/libutests.so \
     ${datadir}/beignet/test_kernels/* \
 "
-RPROVIDES_${PN}-opencl-icd += "opencl-icd"
+
+RPROVIDES_${PN} += "opencl-icd"
+
+# Provide Debian package name "${PN}-opencl-icd"
+RPROVIDES_${PN} += "${PN}-opencl-icd"
+PKG_${PN} = "${PN}-opencl-icd"
 
 PARALLEL_MAKE = ""
 BBCLASSEXTEND += "native"
