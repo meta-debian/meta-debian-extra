@@ -275,10 +275,7 @@ do_install_append(){
 	ln -sf libclang-${LLVM_VERSION}.so.1 ${D}${libdir}/${DEB_HOST_MULTIARCH}/libclang.so.1
 
 	# According to debian/liblldb-X.Y.links.in
-	install -d ${D}${PYTHON_SITEPACKAGES_DIR}/lldb-${LLVM_VERSION}
 	ln -sf liblldb-${LLVM_VERSION}.so.1 ${D}${libdir}/${DEB_HOST_MULTIARCH}/liblldb-${LLVM_VERSION}.so
-	ln -sf ../../../../../${DEB_HOST_MULTIARCH}/liblldb-${LLVM_VERSION}.so \
-	        ${D}${PYTHON_SITEPACKAGES_DIR}/lldb-${LLVM_VERSION}/_lldb.so
 	ln -sf ../../${DEB_HOST_MULTIARCH}/liblldb-${LLVM_VERSION}.so.1 \
 	        ${D}${libdir}/llvm-${LLVM_VERSION}/lib/liblldb.so.1
 	ln -sf ../../${DEB_HOST_MULTIARCH}/liblldb-${LLVM_VERSION}.so.1 \
@@ -328,12 +325,16 @@ do_install_append_class-native() {
 
 # we name and ship packages as Debian,
 # so we need pass QA errors with dev-so and dev-deps
-INSANE_SKIP_python-lldb-${LLVM_VERSION} += "dev-so"
-INSANE_SKIP_liblldb-${LLVM_VERSION} += "dev-so"
-INSANE_SKIP_lldb-${LLVM_VERSION} += "dev-deps"
-INSANE_SKIP_llvm-${LLVM_VERSION}-tools += "dev-deps"
-INSANE_SKIP_clang-${LLVM_VERSION} += "dev-deps"
-INSANE_SKIP_python-lldb-${LLVM_VERSION} += "dev-deps"
+# - python-lldb-3.8 need to include "_lldb.so"
+# - liblldb-3.8 need to include "liblldb-3.8.so"
+# - clang-3.8 needs to depend on libclang-common-3.8-dev
+# - lldb-3.8 needs to depend on llvm-3.8-dev
+# - llvm-3.8-tools  needs to depend on llvm-3.8-dev
+INSANE_SKIP_${MLPREFIX}python-lldb-${LLVM_VERSION} += "dev-so"
+INSANE_SKIP_${MLPREFIX}liblldb-${LLVM_VERSION} += "dev-so"
+INSANE_SKIP_${MLPREFIX}lldb-${LLVM_VERSION} += "dev-deps"
+INSANE_SKIP_${MLPREFIX}llvm-${LLVM_VERSION}-tools += "dev-deps"
+INSANE_SKIP_${MLPREFIX}clang-${LLVM_VERSION} += "dev-deps"
 
 PACKAGES =+ "\
     libclang-${LLVM_VERSION}-staticdev llvm-${LLVM_VERSION}-staticdev liblldb-${LLVM_VERSION}-staticdev \
@@ -456,7 +457,6 @@ FILES_liblldb-${LLVM_VERSION} = " \
     ${libdir}/llvm-${LLVM_VERSION}/lib/liblldb${SOLIBS} \
     ${libdir}/llvm-${LLVM_VERSION}/lib/liblldb-${LLVM_VERSION}${SOLIBS} \
     ${libdir}/llvm-${LLVM_VERSION}/lib/${PYTHON_DIR}/*-packages/readline.so \
-    ${PYTHON_SITEPACKAGES_DIR}/lldb-${LLVM_VERSION} \
 "
 FILES_python-lldb-${LLVM_VERSION} = " \
     ${libdir}/llvm-${LLVM_VERSION}/lib/${PYTHON_DIR}/*-packages/lldb \
