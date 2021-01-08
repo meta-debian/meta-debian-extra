@@ -169,7 +169,7 @@ FILES_${PN}-dev += "${libdir}/*/*.la ${libdir}/vdpau/*${SOLIBSDEV}"
 
 # we name and ship this package as Debian,
 # so we need pass QA errors with dev-so
-INSANE_SKIP_mesa-opencl-icd += "dev-so"
+INSANE_SKIP_${MLPREFIX}mesa-opencl-icd += "dev-so"
 
 # Remove the mesa dependency on mesa-dev, as mesa is empty
 RDEPENDS_${PN}-dev = ""
