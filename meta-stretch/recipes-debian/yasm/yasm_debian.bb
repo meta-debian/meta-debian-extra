@@ -28,3 +28,5 @@ do_install_append() {
         rm -rf ${D}${nonarch_libdir}
         rm -rf ${D}${bindir}/vsyasm
 }
+
+BBCLASSEXTEND += "native"

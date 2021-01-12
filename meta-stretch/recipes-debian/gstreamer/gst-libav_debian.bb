@@ -21,11 +21,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=b234ee4d69f5fce4486a80fdaf4a4263 \
 
 inherit autotools pkgconfig
 
-#DEBIAN_SRC_URI = "file://gst-libav-1.10.4.tar.gz"
-
-#DEBIAN_UNPACK_DIR = "${WORKDIR}/gst-libav-1.10.4"
-
-DEPENDS += "bzip2 glib-2.0 gstreamer gst-plugins-base xz-utils"
+DEPENDS += "bzip2 glib-2.0 gstreamer gst-plugins-base xz-utils yasm-native"
 
 do_install_append() {
 	rm -rf ${D}/${libdir}/gstreamer-1.0/*.la
@@ -34,3 +30,6 @@ PACKAGECONFIG[orc] = "--enable-orc,--disable-orc,orc"
 PACKAGECONFIG[valgrind] = "--enable-valgrind,--disable-valgrind,valgrind,"
 
 FILES_${PN} += "${libdir}/gstreamer-*/libgstlibav.so"
+
+# ffmpeg/libav disables PIC on some platforms (e.g. x86-32)
+INSANE_SKIP_${PN} = "textrel"
