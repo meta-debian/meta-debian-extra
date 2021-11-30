@@ -1,0 +1,16 @@
+Add the path to the native sysroot directories containing the libraries,
+avoid searching the library on host machine
+
+diff --git a/configure.py b/configure.py
+index 54023c1..c8d3a9b 100755
+--- a/configure.py
++++ b/configure.py
+@@ -73,7 +73,7 @@ if llvm_int_version < 370:
+     print "libclc requires LLVM >= 3.7"
+     sys.exit(1)
+ 
+-llvm_system_libs = llvm_config(['--system-libs'])
++llvm_system_libs = "-L##STAGING_LIBDIR_NATIVE## " + llvm_config(['--system-libs'])
+ llvm_bindir = llvm_config(['--bindir'])
+ llvm_core_libs = llvm_config(['--libs', 'core', 'bitreader', 'bitwriter']) + ' ' + \
+                  llvm_system_libs + ' ' + \
