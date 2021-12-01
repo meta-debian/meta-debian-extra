@@ -16,6 +16,8 @@ LIC_FILES_CHKSUM = "\
   file://LICENSE.TXT;md5=3d5e39153f76a72ef2ced27e62d33511 \
 "
 
+SRC_URI += "file://fix-using-host-library.patch"
+
 inherit autotools-brokensep
 
 DEPENDS = "python llvm-toolchain-3.8"
@@ -25,6 +27,7 @@ export YOCTO_ALTERNATE_EXE_PATH = "${STAGING_DIR_HOST}${nonarch_libdir}/llvm-3.8
 
 do_configure(){
 	cd ${S}
+	sed -i -e "s|##STAGING_LIBDIR_NATIVE##|${STAGING_LIBDIR_NATIVE}|" configure.py
 	./configure.py  --prefix=${prefix} --with-llvm-config=${STAGING_BINDIR_NATIVE}/llvm-config-3.8
 }
 
