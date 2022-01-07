@@ -32,7 +32,8 @@ LLVM_VERSION_FULL = "${PV}"
 def get_llvm_arch(bb, d, arch_var):
     import re
     a = d.getVar(arch_var, True)
-    if   re.match('(i.86|athlon|x86.64)$', a):         return 'X86'
+    if   re.match('(i.86|x86.64)$', a):                return 'AMDGPU;X86'
+    elif re.match('athlon$', a):                       return 'X86'
     elif re.match('arm$', a):                          return 'ARM'
     elif re.match('armeb$', a):                        return 'ARM'
     elif re.match('aarch64$', a):                      return 'AArch64'
@@ -48,8 +49,6 @@ def get_llvm_target_arch(bb, d):
 # Default to build all OE-Core supported target arches (user overridable).
 #
 LLVM_TARGETS ?= "${@get_llvm_target_arch(bb, d)}"
-LLVM_TARGETS_prepend_x86 = "AMDGPU;"
-LLVM_TARGETS_prepend_x86-64 = "AMDGPU;"
 
 EXTRA_OECMAKE += "-DUSE_SHARED_LLVM=on \
                 -DCMAKE_INSTALL_PREFIX=${libdir}/llvm-${LLVM_VERSION} \
