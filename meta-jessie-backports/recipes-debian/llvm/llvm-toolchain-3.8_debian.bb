@@ -17,7 +17,7 @@ PV = "3.8.1"
 LICENSE = "NCSA"
 LIC_FILES_CHKSUM = "file://LICENSE.TXT;md5=4c0bc17c954e99fd547528d938832bfa"
 
-DEPENDS_class-target = "libffi libxml2-native zlib binutils python libedit swig-native dpkg-native llvm-toolchain-3.8-native"
+DEPENDS_class-target = "libffi libxml2 libxml2-native zlib binutils python libedit swig-native dpkg-native llvm-toolchain-3.8-native"
 DEPENDS_class-native = "libffi-native libxml2-native zlib-native binutils-native python-native swig-native dpkg-native"
 
 KEEP_NONARCH_BASELIB = "1"
